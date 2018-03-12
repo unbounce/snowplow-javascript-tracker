@@ -1463,6 +1463,15 @@
 			if (activityTrackingEnabled && !activityTrackingInstalled) {
 				activityTrackingInstalled = true;
 
+				// Add mousewheel event handler, detect passive event listeners for performance
+				if (Object.prototype.hasOwnProperty.call(browserFeatures, 'wheel')) {
+					if (Object.prototype.hasOwnProperty.call(browserFeatures, 'passive')) {
+						helpers.addEventListener(documentAlias, browserFeatures.wheel, activityHandler, {passive: true});
+					} else {
+						helpers.addEventListener(documentAlias, browserFeatures.wheel, activityHandler);
+					}
+				}
+
 				// Capture our initial scroll points
 				resetMaxScrolls();
 
@@ -1472,8 +1481,6 @@
 				helpers.addEventListener(documentAlias, 'mouseup', activityHandler);
 				helpers.addEventListener(documentAlias, 'mousedown', activityHandler);
 				helpers.addEventListener(documentAlias, 'mousemove', activityHandler);
-				helpers.addEventListener(documentAlias, 'mousewheel', activityHandler);
-				helpers.addEventListener(windowAlias, 'DOMMouseScroll', activityHandler);
 				helpers.addEventListener(windowAlias, 'scroll', scrollHandler); // Will updateMaxScrolls() for us
 				helpers.addEventListener(documentAlias, 'keypress', activityHandler);
 				helpers.addEventListener(documentAlias, 'keydown', activityHandler);
