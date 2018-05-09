@@ -13,11 +13,7 @@
         "removeComments": true,
         "noLib": false,
         "preserveConstEnums": true,
-        "suppressImplicitAnyIndexErrors": true,
-        "lib": [
-            "es2015.symbol",
-            "es2015.symbol.wellknown"
-        ]
+        "suppressImplicitAnyIndexErrors": true
     },
     "exclude": [
         "node_modules"
