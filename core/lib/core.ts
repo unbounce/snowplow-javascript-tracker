@@ -60,6 +60,32 @@ function getTimestamp(tstamp?: Timestamp): TimestampPayload {
 	}
 }
 
+function getSchema(sb: {}): string | undefined {
+    let schema = '';
+
+    switch (sb['e']) {
+        case 'ue':
+        	let event = '';
+            if ('ue_pr' in sb) {
+				event = sb['ue_pr'];
+            } else if ('ue_px' in sb) {
+                event = payload.base64urldecode(sb['ue_px']);
+            } else {
+            	break;
+			}
+            schema = event['schema'];
+            break;
+    }
+
+    return schema;
+}
+
+function getEventType(sb: {}): string | undefined {
+	if ('e' in sb) {
+        return sb['e'];
+    }
+}
+
 /**
  * Create a tracker core object
  *
@@ -76,6 +102,9 @@ export function trackerCore(base64: boolean, callback?: (PayloadData) => void) {
 
 	// Dictionary of key-value pairs which get added to every payload, e.g. tracker version
 	var payloadPairs = {};
+
+	// List of contexts that get added to every event
+	let globalContexts = [];
 
 	/**
 	 * Set a persistent key-value pair to be added to every payload
