@@ -17,7 +17,7 @@ import uuid = require('uuid');
 
 import * as payload from './payload';
 import {PayloadData} from "./payload";
-import {contextModule} from "./contexts";
+import {contextModule as contextConstructor} from "./contexts";
 
 /**
  * Interface common for any Self-Describing JSON such as custom context or
@@ -76,7 +76,16 @@ export function trackerCore(base64: boolean, callback?: (PayloadData) => void) {
 	// Dictionary of key-value pairs which get added to every payload, e.g. tracker version
 	var payloadPairs = {};
 
-	var contextModule = contextModule();
+	let contextModule = contextConstructor();
+
+    /**
+	 * Gets all global contexts to be added to events
+	 *
+	 * @param event
+     */
+    function getAllContexts(event: PayloadData) : Array<SelfDescribingJson> {
+    	return contextModule.getApplicableContexts(event);
+	}
 
 	/**
 	 * Set a persistent key-value pair to be added to every payload
