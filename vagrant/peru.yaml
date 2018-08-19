@@ -9,6 +9,6 @@ curl module ansible:
     export: ansible-69d85c22c7475ccf8169b6ec9dee3ee28c92a314
 
 git module ansible_playbooks:
-    url: https://github.com/snowplow/ansible-playbooks.git
+    url: https://github.com/mhadam/ansible-playbooks.git
     # Comment out to fetch a specific rev instead of master:
-    # rev: xxx
+    rev: java-update

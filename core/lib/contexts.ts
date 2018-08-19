@@ -1,25 +1,91 @@
-import {PayloadData, base64urldecode} from "./payload";
+import {PayloadData, base64urldecode, isNonEmptyJson} from "./payload";
 import {SelfDescribingJson} from "./core";
+import isEqual = require('lodash.isequal');
 
 /**
- * Algebraic datatype representing context types
+ * Datatypes (some algebraic) for representing context types
  */
-export interface Context { readonly type: 'Context'; value: SelfDescribingJson }
-export interface ContextGenerator { readonly type: 'ContextGenerator'; value: (PayloadData) => Context; }
-export interface ContextPrimitive { readonly type: 'ContextPrimitive'; value: Context | ContextGenerator; }
-export interface FilterContextProvider {
-    readonly type: 'FilterContextProvider';
-    value: [(PayloadData) => boolean, ContextPrimitive];
+export type ContextGenerator = (PayloadData) => SelfDescribingJson;
+export type ContextPrimitive = SelfDescribingJson | ContextGenerator;
+export type ContextFilter = (Payload) => boolean;
+export type FilterContextProvider = [ContextFilter, ContextPrimitive];
+export type PathContextProvider = [string | Array<string>, ContextPrimitive];
+export type ConditionalContextProvider = FilterContextProvider | PathContextProvider;
+
+export function isSelfDescribingJson(input: any) : boolean {
+    if (isNonEmptyJson(input)) {
+        if ('schema' in input && 'data' in input) {
+            return (typeof(input.schema) === 'string' && typeof(input.data) === 'object');
+        }
+    }
+    return false;
 }
-export interface PathContextProvider { readonly type: 'PathContextProvider'; value: [string , ContextPrimitive]; }
-export interface ConditionalContextProvider {
-    readonly type: 'ConditionalContextProvider';
-    value: FilterContextProvider | PathContextProvider;
+
+export function isContextGenerator(input: any) : boolean {
+    if (typeof(input) === 'function') {
+        return input.length === 1;
+    };
+    return false;
+}
+
+export function isContextFilter(input: any) : boolean {
+    if (typeof(input) === 'function') {
+        return input.length === 1;
+    }
+    return false;
+}
+
+export function isContextPrimitive(input: any) : boolean {
+    return (isContextGenerator(input) || isSelfDescribingJson(input));
+}
+
+export function isFilterContextProvider(input: any) : boolean {
+    if (Array.isArray(input)) {
+        if (input.length === 2) {
+            return isContextFilter(input[0]) && isContextPrimitive(input[1]);
+        }
+    }
+    return false;
+}
+
+export function isSchemaMatchArg(input: any) : boolean {
+    if (typeof (input) === 'string') {
+        return true;
+    }
+
+    if (Array.isArray(input)) {
+        if (input.length === 0) {
+            return false;
+        }
+        return input.every((x) => (typeof(x) === 'string'));
+    }
+
+    return false;
+}
+
+export function isPathContextProvider(input: any) : boolean {
+    if (Array.isArray(input)) {
+        if (input.length === 2) {
+            return isSchemaMatchArg(input[0]) && isContextPrimitive(input[1]);
+        }
+    }
+    return false;
+}
+
+export function isConditionalContextProvider(input: any) : boolean {
+    return isFilterContextProvider(input) || isPathContextProvider(input);
 }
 
 function matchSchema(provider: PathContextProvider, schema: string) : boolean {
-    let mm = require('micromatch');
-    return mm.isMatch(provider.value[0], schema);
+    if (isPathContextProvider(provider)) {
+        let mm = require('micromatch');
+        if (typeof(provider[0]) === 'string') {
+            return mm.isMatch(provider[0], schema);
+        } else if (Array.isArray(provider[0])) {
+            return (provider[0] as Array<string>).every((x) => (mm.isMatch(x, schema)));
+        }
+    }
+    return false;
 }
 
 function getSchema(sb: {}): string | undefined {
@@ -49,38 +115,38 @@ function getEventType(sb: {}): string | undefined {
 }
 
 export function contextModule() {
-    let globalContexts : Array<ContextPrimitive> = [];
-    let conditionalContexts : Array<ConditionalContextProvider> = [];
+    let globalPrimitives : Array<ContextPrimitive> = [];
+    let conditionalProviders : Array<ConditionalContextProvider> = [];
 
-    function generateContext(contextPrimitive: ContextPrimitive, event: PayloadData) : Context {
-        if (contextPrimitive.value.type === 'Context') {
-            return contextPrimitive.value;
-        } else if (contextPrimitive.value.type === 'ContextGenerator') {
-            return contextPrimitive.value.value(event);
+    function generateContext(contextPrimitive: ContextPrimitive, event: PayloadData) : SelfDescribingJson {
+        if (isSelfDescribingJson(contextPrimitive)) {
+            return <SelfDescribingJson> contextPrimitive;
+        } else if (isContextGenerator(contextPrimitive)) {
+            return (contextPrimitive as ContextGenerator)(event);
         }
-        return {type: 'Context', value: {'schema': '', data: Object()}};
+        return {'schema': '', 'data': {}};
     }
 
-    function assembleAllContexts(event: PayloadData) : Array<Context> {
-        let contexts : Array<Context> = [];
-        for (let context of globalContexts) {
+    function assembleAllContexts(event: PayloadData) : Array<SelfDescribingJson> {
+        let contexts : Array<SelfDescribingJson> = [];
+        for (let context of globalPrimitives) {
             contexts = contexts.concat(generateContext(context, event));
         }
 
-        for (let context of conditionalContexts) {
-            if (context.value.type === 'FilterContextProvider') {
-                let filter = context.value.value[0];
+        for (let provider of conditionalProviders) {
+            if (isFilterContextProvider(provider)) {
+                let filter : ContextFilter = (provider as FilterContextProvider)[0];
                 if (filter(event)) {
-                    contexts = contexts.concat(generateContext(context.value[1], event));
+                    contexts = contexts.concat(generateContext((provider as FilterContextProvider)[1], event));
                 }
-            } else if (context.value.type === 'PathContextProvider') {
+            } else if (isPathContextProvider(provider)) {
                 let schema = getSchema(event);
                 if (schema === undefined) {
                     continue;
                 }
 
-                if (matchSchema(context.value, schema)) {
-                    contexts = contexts.concat(generateContext(context.value.value[1], event));
+                if (matchSchema((provider as PathContextProvider), schema)) {
+                    contexts = contexts.concat(generateContext((provider as PathContextProvider)[1], event));
                 }
             }
         }
@@ -89,10 +155,25 @@ export function contextModule() {
     }
 
     return {
+        addConditionalContexts: function (contexts: Array<ConditionalContextProvider>) {
+            conditionalProviders = conditionalProviders.concat(contexts);
+        },
+
+        addGlobalContexts: function (contexts: Array<ContextPrimitive>) {
+            globalPrimitives = globalPrimitives.concat(contexts);
+        },
+
+        clearAllContexts: function () {
+            conditionalProviders = [];
+            globalPrimitives = [];
+        },
+
+        removeGlobalContext: function (context: SelfDescribingJson) {
+            globalPrimitives.filter(item => isEqual(item, context));
+        },
+
         getApplicableContexts: function (event: PayloadData) : Array<SelfDescribingJson> {
-            let contexts : Array<Context> = assembleAllContexts(event);
-            let selfDescribingJsons : Array<SelfDescribingJson> = contexts.map((x) => x.value);
-            return selfDescribingJsons;
+            return assembleAllContexts(event);
         }
     };
 }

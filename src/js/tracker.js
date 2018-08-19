@@ -2633,6 +2633,27 @@
 				});
 			},
 
+            /**
+			 * Add a context that is sent with every event
+			 *
+			 * @param ContextPrimitive context
+             */
+            addGlobalContext: core.addGlobalContext,
+
+            /**
+             * Add contexts that are sent with every event
+             *
+             * @param Array<ContextPrimitive> contexts
+             */
+            addGlobalContexts: core.addGlobalContexts,
+
+            /**
+             * Remove context that is already sent with every event
+             *
+             * @param ContextPrimitive context
+             */
+            removeGlobalContext: core.removeGlobalContext,
+
 			/**
 			 * Enable tracking of unhandled exceptions with custom contexts
 			 *

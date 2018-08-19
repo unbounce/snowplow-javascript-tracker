@@ -12,6 +12,8 @@
     "@types/uuid": "^2.0.29"
   },
   "dependencies": {
+    "@types/lodash": "^4.14.116",
+    "lodash.isequal": "^4.5.0",
     "micromatch": "^3.1.10",
     "uuid": "2.0.3"
   },

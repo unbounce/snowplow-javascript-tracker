@@ -17,7 +17,12 @@ import uuid = require('uuid');
 
 import * as payload from './payload';
 import {PayloadData} from "./payload";
-import {contextModule as contextConstructor} from "./contexts";
+import {
+    ConditionalContextProvider,
+    contextModule as contextConstructor,
+    ContextPrimitive, isConditionalContextProvider,
+    isContextPrimitive
+} from "./contexts";
 
 /**
  * Interface common for any Self-Describing JSON such as custom context or
@@ -966,6 +971,24 @@ export function trackerCore(base64: boolean, callback?: (PayloadData) => void) {
 					expiry: expiry,
 				})
 			}, context ? context.concat([documentJson]) : [documentJson], tstamp);
+		},
+
+        addGlobalContext: function(contexts: Array<Object>) {
+            let primitives : Array<ContextPrimitive> = <Array<ContextPrimitive>> contexts.filter(isContextPrimitive);
+            contextModule.addGlobalContexts(primitives);
+        },
+
+        addConditionalContexts: function(contexts: Array<Object>) {
+            let providers: Array<ConditionalContextProvider> = <Array<ConditionalContextProvider>> contexts.filter(isConditionalContextProvider);
+            contextModule.addConditionalContexts(providers);
+        },
+
+        clearGlobalContexts: function() {
+            contextModule.clearAllContexts();
+        },
+
+        removeGlobalContext: function(context: SelfDescribingJson) {
+            contextModule.removeGlobalContext(context);
 		}
 	};
 }
