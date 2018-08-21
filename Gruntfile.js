@@ -35,242 +35,249 @@
 var semver = require('semver');
 
 /*global module:false*/
-module.exports = function(grunt) {
+module.exports = function (grunt) {
 
-  var pkg = grunt.file.readJSON('package.json');
-  var semVer = semver.parse(pkg.version);
-  pkg.pinnedVersion = semVer.major;
-  var banner = "/*!" +
-  " * Snowplow - The world's most powerful web analytics platform\n" +
-  " *\n" +
-  " * @description <%= pkg.description %>\n" +
-  " * @version     <%= pkg.version %>\n" +
-  " * @author      " + pkg.contributors.join(', ') +"\n" +
-  " * @copyright   Anthon Pang, Snowplow Analytics Ltd\n" +
-  " * @license     <%= pkg.license %>\n" +
-  " */\n\n" +
-  "/*\n" +
-  " * For technical documentation:\n" +
-  " * https://github.com/snowplow/snowplow/wiki/javascript-tracker\n" +
-  " *\n" +
-  " * For the setup guide:\n" +
-  " * https://github.com/snowplow/snowplow/wiki/javascript-tracker-setup\n" +
-  " * /\n" +
-  "\n" +
-  "/*\n" +
-  " * Browser [In]Compatibility\n" +
-  " * - minimum required ECMAScript: ECMA-262, edition 3\n" +
-  " *\n" +
-  " * Incompatible with these (and earlier) versions of:\n" +
-  " * - IE4 - try..catch and for..in introduced in IE5\n" +
-  " *- IE5 - named anonymous functions, array.push, encodeURIComponent, decodeURIComponent, and getElementsByTagName introduced in IE5.5\n" +
-  " * - Firefox 1.0 and Netscape 8.x - FF1.5 adds array.indexOf, among other things\n" +
-  " * - Mozilla 1.7 and Netscape 6.x-7.x\n" +
-  " * - Netscape 4.8\n" +
-  " * - Opera 6 - Error object (and Presto) introduced in Opera 7\n" +
-  " * - Opera 7\n" +
-  " */\n\n";
+    var pkg = grunt.file.readJSON('package.json');
+    var semVer = semver.parse(pkg.version);
+    pkg.pinnedVersion = semVer.major;
+    var banner = "/*!" +
+        " * Snowplow - The world's most powerful web analytics platform\n" +
+        " *\n" +
+        " * @description <%= pkg.description %>\n" +
+        " * @version     <%= pkg.version %>\n" +
+        " * @author      " + pkg.contributors.join(', ') + "\n" +
+        " * @copyright   Anthon Pang, Snowplow Analytics Ltd\n" +
+        " * @license     <%= pkg.license %>\n" +
+        " */\n\n" +
+        "/*\n" +
+        " * For technical documentation:\n" +
+        " * https://github.com/snowplow/snowplow/wiki/javascript-tracker\n" +
+        " *\n" +
+        " * For the setup guide:\n" +
+        " * https://github.com/snowplow/snowplow/wiki/javascript-tracker-setup\n" +
+        " * /\n" +
+        "\n" +
+        "/*\n" +
+        " * Browser [In]Compatibility\n" +
+        " * - minimum required ECMAScript: ECMA-262, edition 3\n" +
+        " *\n" +
+        " * Incompatible with these (and earlier) versions of:\n" +
+        " * - IE4 - try..catch and for..in introduced in IE5\n" +
+        " *- IE5 - named anonymous functions, array.push, encodeURIComponent, decodeURIComponent, and getElementsByTagName introduced in IE5.5\n" +
+        " * - Firefox 1.0 and Netscape 8.x - FF1.5 adds array.indexOf, among other things\n" +
+        " * - Mozilla 1.7 and Netscape 6.x-7.x\n" +
+        " * - Netscape 4.8\n" +
+        " * - Opera 6 - Error object (and Presto) introduced in Opera 7\n" +
+        " * - Opera 7\n" +
+        " */\n\n";
 
-  grunt.initConfig({
+    grunt.initConfig({
 
-    banner: banner,
+        banner: banner,
 
-    pkg: pkg,
+        pkg: pkg,
 
-    subdomain: process.env.SUBDOMAIN,
+        subdomain: process.env.SUBDOMAIN,
 
-    lodash: {
-      build: {
-        dest: 'src/js/lib_managed/lodash.js',
-        options: {
-          exports: 'node',
-          include: 'isArray, isFunction, isString, isObject, isUndefined, map, mapValues, forEach, filter, find'
+        lodash: {
+            build: {
+                dest: 'src/js/lib_managed/lodash.js',
+                options: {
+                    exports: 'node',
+                    include: 'isArray, isFunction, isString, isObject, isUndefined, map, mapValues, forEach, filter, find'
+                }
+            }
+        },
+
+        browserify: {
+            main: {
+                files: {
+                    'dist/bundle.js': ['src/js/init.js']
+                }
+            },
+            test: {
+                files: {
+                    'tests/pages/helpers.js': ['tests/scripts/helpers.js'],
+                    'tests/pages/detectors.js': ['tests/scripts/detectors.js'],
+                    'tests/pages/snowplow.js': ['src/js/init.js']
+                }
+            }
+        },
+
+        concat: {
+            deploy: {
+                options: {
+                    'report': 'gzip',
+                    'banner': '<%= banner %>',
+                    'process': true
+                },
+                src: ['dist/bundle.js'],
+                dest: 'dist/snowplow.js'
+            },
+            tag: {
+                options: {
+                    banner: ';'
+                },
+                src: ['tags/tag.min.js'],
+                dest: 'tags/tag.min.js'
+            },
+            test: {
+                options: {
+                    'process': true
+                },
+                src: ['tests/pages/integration-template.html'],
+                dest: 'tests/pages/integration.html'
+            }
+        },
+
+        uglify: {
+            deploy: {
+                options: {
+                    output: {
+                        max_line_len: 1000
+                    },
+                    report: 'gzip'
+                },
+                files: {
+                    'dist/sp.js': ['dist/snowplow-babel.js']
+                }
+            },
+            tag: {
+                options: {
+                    output: {
+                        max_line_len: 80
+                    }
+                },
+                files: {
+                    'tags/tag.min.js': ['tags/tag.js']
+                }
+            }
+        },
+
+        intern: {
+            // Common
+            options: {
+                config: 'tests/intern.js'
+            },
+
+            nonfunctional: {
+                options: {
+                    runType: 'client',
+                    suites: [
+                        'tests/nonfunctional/helpers.js',
+                        'tests/nonfunctional/in_queue.js',
+                        'tests/nonfunctional/proxies.js'
+                    ]
+                }
+            },
+            functional: {
+                options: {
+                    runType: 'runner',
+                    functionalSuites: [
+                        'tests/functional/detectors.js',
+                        'tests/functional/helpers.js'
+                    ]
+                }
+            },
+            integration: {
+                options: {
+                    runType: 'runner',
+                    functionalSuites: [
+                        'tests/integration/setup.js',       // required prior to integration.js
+                        'tests/integration/integration.js' 	// request_recorder and ngrok need to be running
+                    ]
+                }
+            }
+        },
+
+        babel: {
+            dist: {
+                files: {
+                    'dist/snowplow-babel.js': 'dist/snowplow.js'
+                }
+            }
         }
-      }
-    },
-
-    browserify: {
-      main: {
-        files: {
-          'dist/bundle.js': ['src/js/init.js']
-        }
-      },
-      test: {
-        files: {
-          'tests/pages/helpers.js': ['tests/scripts/helpers.js'],
-          'tests/pages/detectors.js': ['tests/scripts/detectors.js'],
-          'tests/pages/snowplow.js': ['src/js/init.js']
-        }
-      }
-    },
-
-    concat: {
-      deploy: {
-        options: {
-          'report': 'gzip',
-          'banner': '<%= banner %>',
-          'process': true
-        },
-        src: ['dist/bundle.js'],
-        dest: 'dist/snowplow.js'
-      },
-      tag: {
-        options: {
-          banner: ';'
-        },
-        src: ['tags/tag.min.js'],
-        dest: 'tags/tag.min.js'
-      },
-      test: {
-        options: {
-          'process': true
-        },
-        src: ['tests/pages/integration-template.html'],
-        dest: 'tests/pages/integration.html'
-      }
-    },
-
-    min: {
-      deploy: {
-        options: {
-          linebreak: 1000,
-          report: 'gzip'
-        },
-        files: [
-          {
-            src: 'dist/snowplow.js',
-            dest: 'dist/sp.js'
-          }
-        ]
-      },
-      tag: {
-        options: {
-          linebreak: 80
-        },
-        files: [
-          {
-            src: 'tags/tag.js',
-            dest: 'tags/tag.min.js'
-          }
-        ]
-      }
-    },
-
-    intern: {
-      // Common
-      options: {
-        config: 'tests/intern.js'
-      },
-
-      nonfunctional: {
-        options: {
-          runType: 'client',
-          suites: [
-            'tests/nonfunctional/helpers.js',
-            'tests/nonfunctional/in_queue.js',
-            'tests/nonfunctional/proxies.js'
-          ]
-        }
-      },
-      functional: {
-        options: {
-          runType: 'runner',
-          functionalSuites: [
-            'tests/functional/detectors.js',
-            'tests/functional/helpers.js'
-          ]
-        }
-      },
-      integration: {
-        options: {
-          runType: 'runner',
-          functionalSuites: [
-            'tests/integration/setup.js',       // required prior to integration.js
-            'tests/integration/integration.js' 	// request_recorder and ngrok need to be running
-          ]
-        }
-      }
-    }
-  });
-
-  grunt.loadNpmTasks('grunt-contrib-concat');
-  grunt.loadNpmTasks('grunt-yui-compressor');
-  grunt.loadNpmTasks('grunt-aws');
-  grunt.loadNpmTasks('grunt-browserify');
-  grunt.loadNpmTasks('intern');
-  grunt.loadNpmTasks('grunt-lodash');
-
-  grunt.registerTask('upload_setup', 'Read aws.json and configure upload tasks', function() {
-    var aws = grunt.file.readJSON('aws.json');
-
-    grunt.config('aws', aws);
-
-    grunt.config('s3', {
-      options: {
-        accessKeyId: '<%= aws.key %>',
-        secretAccessKey: '<%= aws.secret %>',
-        bucket: '<%= aws.bucket %>',
-        access: 'public-read',
-        region: '<%= aws.region %>',
-        gzip: true,
-        cache: false
-      },
-      not_pinned: {
-        options: {
-          headers: {
-            CacheControl: "max-age=315360000"
-          }
-        },
-        files: [
-          {
-            src: ["dist/sp.js"],
-            dest: "<%= pkg.version %>/sp.js"
-          }
-        ]
-      },
-      pinned: {
-        options: {
-          headers: {
-            CacheControl: "max-age=3600"
-          }
-        },
-        files: [
-          {
-            src: ["dist/sp.js"],
-            dest: "<%= pkg.pinnedVersion %>/sp.js"
-          }
-        ]
-      }
     });
 
-    grunt.config('cloudfront', {
-      options: {
-        accessKeyId: '<%= aws.key %>',
-        secretAccessKey: '<%= aws.secret %>',
-        distributionId: '<%= aws.distribution %>'
-      },
-      not_pinned: {
-        options: {
-          invalidations: [
-            '/<%= pkg.version %>/sp.js'
-          ]
-        }
-      },
-      pinned: {
-        options: {
-          invalidations: [
-            '/<%= pkg.pinnedVersion %>/sp.js'
-          ]
-        }
-      }
-    });
-  });
+    grunt.loadNpmTasks('grunt-contrib-concat');
+    grunt.loadNpmTasks('grunt-aws');
+    grunt.loadNpmTasks('grunt-browserify');
+    grunt.loadNpmTasks('intern');
+    grunt.loadNpmTasks('grunt-lodash');
+    grunt.loadNpmTasks('grunt-contrib-uglify');
+    grunt.loadNpmTasks('grunt-babel');
 
-  grunt.registerTask('default', 'Build lodash, Browserify, add banner, and minify', ['lodash', 'browserify:main', 'concat:deploy', 'min:deploy']);
-  grunt.registerTask('publish', 'Upload to S3 and invalidate Cloudfront (full semantic version only)', ['upload_setup', 'lodash', 'browserify:main', 'concat:deploy', 'min:deploy', 's3:not_pinned', 'cloudfront:not_pinned']);
-  grunt.registerTask('publish-pinned', 'Upload to S3 and invalidate Cloudfront (full semantic version and semantic major version)', ['upload_setup', 'lodash', 'browserify:main', 'concat:deploy', 'min:deploy', 's3', 'cloudfront']);
-  grunt.registerTask('quick', 'Build snowplow.js, skipping building lodash and minifying', ['browserify:main', 'concat:deploy']);
-  grunt.registerTask('test', 'Intern tests', ['browserify:test', 'intern']);
-  grunt.registerTask('travis', 'Intern tests for Travis CI',  ['lodash', 'concat:test', 'browserify:test', 'intern']);
-  grunt.registerTask('tags', 'Minifiy the Snowplow invocation tag', ['min:tag', 'concat:tag']);
+    grunt.registerTask('upload_setup', 'Read aws.json and configure upload tasks', function () {
+        var aws = grunt.file.readJSON('aws.json');
+
+        grunt.config('aws', aws);
+
+        grunt.config('s3', {
+            options: {
+                accessKeyId: '<%= aws.key %>',
+                secretAccessKey: '<%= aws.secret %>',
+                bucket: '<%= aws.bucket %>',
+                access: 'public-read',
+                region: '<%= aws.region %>',
+                gzip: true,
+                cache: false
+            },
+            not_pinned: {
+                options: {
+                    headers: {
+                        CacheControl: "max-age=315360000"
+                    }
+                },
+                files: [
+                    {
+                        src: ["dist/sp.js"],
+                        dest: "<%= pkg.version %>/sp.js"
+                    }
+                ]
+            },
+            pinned: {
+                options: {
+                    headers: {
+                        CacheControl: "max-age=3600"
+                    }
+                },
+                files: [
+                    {
+                        src: ["dist/sp.js"],
+                        dest: "<%= pkg.pinnedVersion %>/sp.js"
+                    }
+                ]
+            }
+        });
+
+        grunt.config('cloudfront', {
+            options: {
+                accessKeyId: '<%= aws.key %>',
+                secretAccessKey: '<%= aws.secret %>',
+                distributionId: '<%= aws.distribution %>'
+            },
+            not_pinned: {
+                options: {
+                    invalidations: [
+                        '/<%= pkg.version %>/sp.js'
+                    ]
+                }
+            },
+            pinned: {
+                options: {
+                    invalidations: [
+                        '/<%= pkg.pinnedVersion %>/sp.js'
+                    ]
+                }
+            }
+        });
+    });
+
+    grunt.registerTask('default', 'Build lodash, Browserify, add banner, and minify', ['lodash', 'browserify:main', 'concat:deploy', 'babel:dist', 'uglify:deploy']);
+    grunt.registerTask('publish', 'Upload to S3 and invalidate Cloudfront (full semantic version only)', ['upload_setup', 'lodash', 'browserify:main', 'concat:deploy', 'babel:dist', 'uglify:deploy', 's3:not_pinned', 'cloudfront:not_pinned']);
+    grunt.registerTask('publish-pinned', 'Upload to S3 and invalidate Cloudfront (full semantic version and semantic major version)', ['upload_setup', 'lodash', 'browserify:main', 'concat:deploy', 'babel:dist', 'uglify:deploy', 's3', 'cloudfront']);
+    grunt.registerTask('quick', 'Build snowplow.js, skipping building lodash and minifying', ['browserify:main', 'concat:deploy']);
+    grunt.registerTask('test', 'Intern tests', ['browserify:test', 'intern']);
+    grunt.registerTask('travis', 'Intern tests for Travis CI', ['lodash', 'concat:test', 'browserify:test', 'intern']);
+    grunt.registerTask('tags', 'Minifiy the Snowplow invocation tag', ['uglify:tag', 'concat:tag']);
 };
