@@ -89,23 +89,32 @@ function matchSchema(provider: PathContextProvider, schema: string) : boolean {
 }
 
 function getSchema(sb: {}): string | undefined {
-    let schema = '';
-
-    switch (sb['e']) {
-        case 'ue':
-            let event = '';
-            if ('ue_pr' in sb) {
-                event = sb['ue_pr'];
-            } else if ('ue_px' in sb) {
-                event = base64urldecode(sb['ue_px']);
-            } else {
-                break;
-            }
-            schema = event['schema'];
-            break;
+    let event : SelfDescribingJson | undefined = getDecodedEvent(sb);
+    let schema : string = '';
+    if (event !== undefined) {
+        schema = event['schema'];
     }
 
     return schema;
+}
+
+function getDecodedEvent(sb: {}): SelfDescribingJson | undefined {
+    let event : SelfDescribingJson = {schema: '', data: {}};
+    switch (sb['e']) { // TODO: get first-class schema too
+        case 'ue':
+            if ('ue_pr' in sb) {
+                event = sb['ue_pr'];
+            } else if ('ue_px' in sb) {
+                let decodedEvent = JSON.parse(base64urldecode(sb['ue_px']));
+                if ('schema' in decodedEvent && 'data' in decodedEvent) {
+                    return decodedEvent
+                } else {
+                    return event;
+                }
+            }
+    }
+
+    return event;
 }
 
 function getEventType(sb: {}): string | undefined {
