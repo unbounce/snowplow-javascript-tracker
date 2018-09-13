@@ -35,79 +35,26 @@
 
 var object = typeof exports !== 'undefined' ? exports : this;
 
-object.ManagedError = function(message) {
-	Error.prototype.constructor.apply(this, arguments);
-	this.message = message;
-};
+object.guard = function guard(object){
 
-object.ManagedError.prototype = new Error();
+    var name,
+        method;
 
-function wrap(fn, value) {
-	// not all 'function's are actually functions!
-	if (typeof value === 'function') {
-		return fn(value);
-	} else if (typeof value === 'object' && value !== null) {
-		for (var key in value) if (value.hasOwnProperty(key)) {
-			value[key] = wrap(fn, value[key]);
-		}
-	}
+    for (name in object){
+        method = object[name];
+        if (typeof method === "function"){
+            object[name] = function(name, method){
+                return function(){
+                    try {
+                        return method.apply(this, arguments);
+                    } catch (ex) {
+                        //log(1, name + "(): " + ex.message);
+                    }
+                };
 
-	return value;
-}
-
-function unguard(fn) {
-	return function () {
-		try {
-			return fn.apply(this, arguments);
-		} catch (e) {
-			// surface the error
-			setTimeout(function () {
-				throw e;
-			}, 0);
-		}
-	};
-}
-
-function guard(fn) {
-	return function () {
-		// capture the arguments and unguard any functions
-		var args = Array.prototype.slice.call(arguments)
-			.map(function (arg) {
-				return wrap(unguard, arg);
-			});
-
-		try {
-			return wrap(guard, fn.apply(this, args));
-		} catch (e) {
-			if (e instanceof object.ManagedError) {
-				throw e;
-			}
-			// log error
-			// re-throw to halt execution
-			throw e;
-		}
-	};
-}
-
-function quietGuard(fn) {
-	return function () {
-		// capture the arguments and unguard any functions
-		var args = Array.prototype.slice.call(arguments)
-			.map(function (arg) {
-				return wrap(unguard, arg);
-			});
-
-		try {
-			return wrap(quietGuard, fn.apply(this, args));
-		} catch (e) {
-			if (e instanceof object.ManagedError) {
-				//throw e;
-			}
-			// log error
-			// re-throw to halt execution
-			//throw e;
-		}
-	};
+            }(name, method);
+        }
+    }
 }
 
 exports.guard = function (fn, debug) {
