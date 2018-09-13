@@ -2671,7 +2671,11 @@
 			preservePageViewId = true
 		};
 
-		return guard(publicObject, mutSnowplowState.debug);
+		if (mutSnowplowState.debug) {
+			guard(publicObject, mutSnowplowState.debug);
+		}
+
+		return publicObject;
 	};
 
 }());
