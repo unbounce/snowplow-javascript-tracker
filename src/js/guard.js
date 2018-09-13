@@ -55,12 +55,4 @@ object.guard = function guard(object){
             }(name, method);
         }
     }
-}
-
-exports.guard = function (fn, debug) {
-	if (debug) {
-		return guard(fn);
-	} else {
-		return quietGuard(fn);
-	}
 };
