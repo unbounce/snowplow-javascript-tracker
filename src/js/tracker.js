@@ -1889,17 +1889,6 @@
 			},
 
 			/**
-			 * Add click listener to a specific link element.
-			 * When clicked, Piwik will log the click automatically.
-			 *
-			 * @param DOMElement element
-			 * @param bool enable If true, use pseudo click-handler (mousedown+mouseup)
-			 */
-			addListener: function (element, pseudoClicks, context) {
-				addClickListener(element, pseudoClicks, context);
-			},
-
-			/**
 			 * Install link tracker
 			 *
 			 * The default behaviour is to use actual click events. However, some browsers
