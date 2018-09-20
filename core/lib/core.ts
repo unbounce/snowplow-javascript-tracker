@@ -987,7 +987,7 @@ export function trackerCore(base64: boolean, callback?: (PayloadData) => void) {
             contextModule.clearAllContexts();
         },
 
-        removeGlobalContext: function(context: SelfDescribingJson) {
+        removeGlobalContext: function(context: Array<Object>) {
             contextModule.removeGlobalContext(context);
 		}
 	};
