@@ -7,10 +7,10 @@ import get = require('lodash.get');
 /**
  * Datatypes (some algebraic) for representing context types
  */
-export type ContextGenerator = (SelfDescribingJson) => SelfDescribingJson;
+export type ContextGenerator = (payload: SelfDescribingJson, eventType: string, schema: string) => SelfDescribingJson;
 export type ContextPrimitive = SelfDescribingJson | ContextGenerator;
 // ContextFilter takes the event payload and relevant schema
-export type ContextFilter = (SelfDescribingJson, string) => boolean;
+export type ContextFilter = (payload: SelfDescribingJson, eventType: string, schema: string) => boolean;
 export type FilterContextProvider = [ContextFilter, ContextPrimitive];
 interface RuleSet {
     accept?: string[] | string;
@@ -19,6 +19,20 @@ interface RuleSet {
 }
 export type PathContextProvider = [RuleSet, ContextPrimitive];
 export type ConditionalContextProvider = FilterContextProvider | PathContextProvider;
+
+function isStringArray(input: any): boolean {
+    if (Array.isArray(input)) {
+        return input.every(function(i){ return typeof i === "string" });
+    }
+    return false;
+}
+
+/*
+Is either an array of strings, or single string.
+ */
+function isValidRuleSetArg(input: any): boolean{
+    return isStringArray(input) || typeof input === 'string';
+}
 
 export function isSelfDescribingJson(input: any) : boolean {
     if (isNonEmptyJson(input)) {
@@ -32,7 +46,7 @@ export function isSelfDescribingJson(input: any) : boolean {
 export function isUnstructuredJson(input: any) : boolean {
     if (isSelfDescribingJson(input)) {
         if (get(input, 'schema') !== 'ue'){
-            return
+            return ;
         }
     }
 }
@@ -40,15 +54,13 @@ export function isUnstructuredJson(input: any) : boolean {
 export function isRuleSet(input: any) : boolean {
     if (isNonEmptyJson(input)) {
         if (has(input, 'accept')) {
-            if (typeof(get(input, 'accept')) !== 'string') {
-                return false;
-            }
-            if (typeof(get(input, 'reject')) !== 'string') {
-                return false;
-            }
-            if (typeof(get(input, 'regex')) !== 'string') {
-                return false;
-            }
+            if ()
+        }
+        if (has(input, 'reject')) {
+
+        }
+        if (has(input, 'regex')) {
+
         }
     }
     return false;
