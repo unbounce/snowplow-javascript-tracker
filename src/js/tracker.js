@@ -35,8 +35,8 @@
 ;(function() {
 
 	var
-		map = require('lodash.map'),
-		forEach = require('lodash.forEach'),
+		map = require('lodash/map'),
+		forEach = require('lodash/foreach'),
 		helpers = require('./lib/helpers'),
 		proxies = require('./lib/proxies'),
 		cookie = require('browser-cookie-lite'),
@@ -1406,7 +1406,7 @@
 		 */
 		function getGaCookiesContext() {
 			var gaCookieData = {};
-			lodash.forEach(['__utma', '__utmb', '__utmc', '__utmv', '__utmz', '_ga'], function (cookieType) {
+			forEach(['__utma', '__utmb', '__utmc', '__utmv', '__utmz', '_ga'], function (cookieType) {
 				var value = cookie.cookie(cookieType);
 				if (value) {
 					gaCookieData[cookieType] = value;

@@ -1,8 +1,8 @@
 import {PayloadData, base64urldecode, isNonEmptyJson} from "./payload";
 import {SelfDescribingJson} from "./core";
-import isEqual = require('lodash.isequal');
-import has = require('lodash.has');
-import get = require('lodash.get');
+import isEqual = require('lodash/isequal');
+import has = require('lodash/has');
+import get = require('lodash/get');
 
 /**
  * Datatypes (some algebraic) for representing context types
@@ -173,12 +173,12 @@ function matchSchemaAgainstRuleSet(ruleSet: RuleSet, schema: string) : boolean {
 }
 
 function getUsefulSchema(sb: SelfDescribingJson): string {
-    if (has(sb, 'e.ue_px.schema')) {
-        return get(sb, 'e.ue_px.schema', '');
-    } else if (has(sb, 'e.ue_pr.schema')) {
-        return get(sb, 'e.ue_pr.schema', '');
-    } else if (has(sb, 'schema')) {
-        return get(sb, 'schema', '');
+    if (typeof get(sb, 'e.ue_px.schema') === 'string') {
+        return get(sb, 'e.ue_px.schema');
+    } else if (typeof get(sb, 'e.ue_pr.schema') === 'string') {
+        return get(sb, 'e.ue_pr.schema');
+    } else if (typeof get(sb, 'schema') === 'string') {
+        return get(sb, 'schema') as string;
     }
     return '';
 }

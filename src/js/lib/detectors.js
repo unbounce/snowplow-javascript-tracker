@@ -35,7 +35,8 @@
 ;(function() {
 
 	var 
-		lodash = require('../lib_managed/lodash'),
+		isUndefined = require('lodash/isundefined'),
+		isFunction = require('lodash/isfunction'),
 		murmurhash3_32_gc = require('murmurhash').v3,
 		tz = require('jstimezonedetect').jstz.determine(),
 		cookie = require('browser-cookie-lite'),
@@ -98,7 +99,7 @@
 	object.hasCookies = function(testCookieName) {
 		var cookieName = testCookieName || 'testcookie';
 
-		if (lodash.isUndefined(navigatorAlias.cookieEnabled)) {
+		if (isUndefined(navigatorAlias.cookieEnabled)) {
 			cookie.cookie(cookieName, '1');
 			return cookie.cookie(cookieName) === '1' ? '1' : '0';
 		}
@@ -230,13 +231,13 @@
 		// IE6/IE7 navigator.javaEnabled can't be aliased, so test directly
 		if (navigatorAlias.constructor === window.Navigator &&
 				typeof navigatorAlias.javaEnabled !== 'unknown' &&
-				!lodash.isUndefined(navigatorAlias.javaEnabled) &&
+				!isUndefined(navigatorAlias.javaEnabled) &&
 				navigatorAlias.javaEnabled()) {
 			features.java = '1';
 		}
 
 		// Firefox
-		if (lodash.isFunction(windowAlias.GearsFactory)) {
+		if (isFunction(windowAlias.GearsFactory)) {
 			features.gears = '1';
 		}
 
