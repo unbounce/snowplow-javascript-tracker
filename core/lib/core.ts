@@ -974,13 +974,11 @@ export function trackerCore(base64: boolean, callback?: (PayloadData) => void) {
 		},
 
         addGlobalContext: function(contexts: Array<Object>) {
-            let primitives : Array<ContextPrimitive> = <Array<ContextPrimitive>> contexts.filter(isContextPrimitive);
-            contextModule.addGlobalContexts(primitives);
+            contextModule.addGlobalContexts(contexts);
         },
 
         addConditionalContexts: function(contexts: Array<Object>) {
-            let providers: Array<ConditionalContextProvider> = <Array<ConditionalContextProvider>> contexts.filter(isConditionalContextProvider);
-            contextModule.addConditionalContexts(providers);
+            contextModule.addConditionalContexts(contexts);
         },
 
         clearGlobalContexts: function() {
