@@ -18,10 +18,7 @@ import uuid = require('uuid');
 import * as payload from './payload';
 import {PayloadData} from "./payload";
 import {
-    ConditionalContextProvider,
-    contextModule as contextConstructor,
-    ContextPrimitive, isConditionalContextProvider,
-    isContextPrimitive
+    contextModule as contextConstructor
 } from "./contexts";
 
 /**
