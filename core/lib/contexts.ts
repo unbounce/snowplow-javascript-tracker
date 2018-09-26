@@ -178,8 +178,8 @@ function getUsefulSchema(sb: SelfDescribingJson): string {
     } else if (typeof get(sb, 'e.ue_pr.schema') === 'string') {
         return get(sb, 'e.ue_pr.schema');
     } else if (typeof get(sb, 'schema') === 'string') {
-        return get(sb, 'schema') as string;
-    }jj
+        return get(sb, 'schema');
+    }
     return '';
 }
 
