@@ -6,13 +6,13 @@ install:
 - npm install -g grunt-cli
 
 - cd core
-- npm install --only=dev --quiet
+- npm install --quiet
 - grunt ts
 - grunt dtsGenerator
 - cd ..
 
-- npm install --no-optional
-- npm install ./core --save # Must be cleaned from package.json before deploy
+- npm install --quiet --no-optional
+- npm install ./core --quiet --save # Must be cleaned from package.json before deploy
 - npm dedupe
 - npm shrinkwrap --also=dev
 - wget https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-amd64.zip
