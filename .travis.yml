@@ -2,7 +2,7 @@ node_js:
 - 4.1.2
 language: node_js
 install:
-- npm install -g npm@3.10.8
+- npm install -g npm@6.4.1
 - npm install -g grunt-cli
 
 - cd core
