@@ -3,7 +3,6 @@ import {SelfDescribingJson} from "./core";
 import isEqual = require('lodash.isequal');
 import has = require('lodash.has');
 import get = require('lodash.get');
-import {decode} from "punycode";
 
 /**
  * Datatypes (some algebraic) for representing context types
