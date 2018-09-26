@@ -11,11 +11,11 @@
     "intern": "3.3.2",
     "lodash.get": "^4.4.2",
     "lodash.has": "^4.5.2",
+    "lodash.isequal": "^4.5.0",
     "typescript": "2.2.2"
   },
   "dependencies": {
     "@types/lodash": "^4.14.116",
-    "lodash.isequal": "^4.5.0",
     "micromatch": "^3.1.10",
     "uuid": "2.0.3"
   },
