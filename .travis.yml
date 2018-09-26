@@ -6,12 +6,14 @@ install:
 - npm install -g grunt-cli
 
 - cd core
-- npm install --quiet
+- rm -rf node_modules
+- npm install
 - grunt ts
 - grunt dtsGenerator
 - cd ..
 
-- npm install --quiet --no-optional
+- rm -rf node_modules
+- npm install --no-optional
 - npm install ./core --quiet --save # Must be cleaned from package.json before deploy
 - npm dedupe
 - npm shrinkwrap --also=dev

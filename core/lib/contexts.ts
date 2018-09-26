@@ -19,7 +19,7 @@ export type PathContextProvider = [RuleSet, ContextPrimitive];
 export type ConditionalContextProvider = FilterContextProvider | PathContextProvider;
 
 function getSchemaParts(input: string): Array<string> | undefined {
-    let re = new RegExp('^iglu:([a-zA-Z0-9-_.]+|\\.)\\/([a-zA-Z0-9-_]+|\\.)\\/([a-zA-Z0-9-_]+|\\.)\\/([0-9]+-[0-9]+-[0-9]|\\.)$');
+    let re = new RegExp('^iglu:([a-zA-Z0-9-_]+|\.)\/([a-zA-Z0-9-_]+|\.)\/([a-zA-Z0-9-_]+|\.)\/([0-9]+-[0-9]+-[0-9]|\.)$');
     let matches = re.exec(input);
     if (matches !== null) {
         return matches.slice(1, 5);
