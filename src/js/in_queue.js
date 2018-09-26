@@ -34,8 +34,7 @@
 
 ;(function() {
 
-	var =
-		map = require('lodash/map'),
+	var map = require('lodash/map'),
 		isUndefined = require('lodash/isundefined'),
 		isFunction = require('lodash/isfunction'),
 		helpers = require('./lib/helpers'),

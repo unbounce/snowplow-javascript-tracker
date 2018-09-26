@@ -32,7 +32,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-var isUndefined = require('lodash/isundefined'),
+var isUndefined = require('lodash/isUndefined'),
 	helpers = require('./lib/helpers'),
 	object = typeof exports !== 'undefined' ? exports : this;
 

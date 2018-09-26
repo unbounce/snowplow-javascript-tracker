@@ -33,11 +33,10 @@
  */
 ;(function () {
 
-	var
-		isArray = require('lodash/isarray'),
-		isObject = require('lodash/isobject'),
-		isString = require('lodash/isstring'),
-		isUndefined = require('lodash/isundefined'),
+	var isArray = require('lodash/isArray'),
+		isObject = require('lodash/isObject'),
+		isString = require('lodash/isString'),
+		isUndefined = require('lodash/isUndefined'),
 		cookie = require('browser-cookie-lite'),
 
 		object = typeof exports !== 'undefined' ? exports : this; // For eventual node.js environment support

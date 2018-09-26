@@ -36,7 +36,7 @@
 
 	var
 		map = require('lodash/map'),
-		forEach = require('lodash/foreach'),
+		forEach = require('lodash/forEach'),
 		helpers = require('./lib/helpers'),
 		proxies = require('./lib/proxies'),
 		cookie = require('browser-cookie-lite'),

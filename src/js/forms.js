@@ -32,8 +32,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-var find = require('lodash/find'),
-    forEach = require('lodash/foreach'),
+var forEach = require('lodash/forEach'),
+	find = require('lodash/find'),
 	helpers = require('./lib/helpers'),
 	object = typeof exports !== 'undefined' ? exports : this;
 

@@ -76,7 +76,7 @@
 	// Load all our modules (at least until we fully modularize & remove grunt-concat)
 	var
 		uuid = require('uuid'),
-		forEach = require('lodash/foreach'),
+		forEach = require('lodash/forEach'),
 		filter = require('lodash/filter'),
 		helpers = require('./lib/helpers'),
 		queue = require('./in_queue'),

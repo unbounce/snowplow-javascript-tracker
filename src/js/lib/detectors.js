@@ -35,8 +35,8 @@
 ;(function() {
 
 	var 
-		isUndefined = require('lodash/isundefined'),
-		isFunction = require('lodash/isfunction'),
+		isUndefined = require('lodash/isUndefined'),
+		isFunction = require('lodash/isFunction'),
 		murmurhash3_32_gc = require('murmurhash').v3,
 		tz = require('jstimezonedetect').jstz.determine(),
 		cookie = require('browser-cookie-lite'),

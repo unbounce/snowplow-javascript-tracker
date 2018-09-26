@@ -35,8 +35,8 @@
 ;(function() {
 
 	var
-		mapValues = require('lodash/mapvalues'),
-		isString = require('lodash/isstring'),
+		mapValues = require('lodash/mapValues'),
+		isString = require('lodash/isString'),
 		map = require('lodash/map'),
 		localStorageAccessible = require('./lib/detectors').localStorageAccessible,
 		helpers = require('./lib/helpers'),

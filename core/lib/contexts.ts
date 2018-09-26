@@ -1,6 +1,6 @@
 import {PayloadData, base64urldecode, isNonEmptyJson} from "./payload";
 import {SelfDescribingJson} from "./core";
-import isEqual = require('lodash/isequal');
+import isEqual = require('lodash/isEqual');
 import has = require('lodash/has');
 import get = require('lodash/get');
 

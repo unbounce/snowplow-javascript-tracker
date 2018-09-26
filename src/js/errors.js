@@ -32,7 +32,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-var isFunction = require('lodash/isfunction'),
+var isFunction = require('lodash/isFunction'),
     helpers = require('./lib/helpers'),
     object = typeof exports !== 'undefined' ? exports : this,
 	windowAlias = window;
