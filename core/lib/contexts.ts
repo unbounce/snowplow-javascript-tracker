@@ -12,14 +12,14 @@ export type ContextGenerator = (payload: SelfDescribingJson, eventType: string, 
 export type ContextPrimitive = SelfDescribingJson | ContextGenerator;
 export type ContextFilter = (payload: SelfDescribingJson, eventType: string, schema: string) => boolean;
 export type FilterContextProvider = [ContextFilter, ContextPrimitive];
-interface RuleSet {
+export interface RuleSet {
     accept?: string[] | string;
     reject?: string[] | string;
 }
 export type PathContextProvider = [RuleSet, ContextPrimitive];
 export type ConditionalContextProvider = FilterContextProvider | PathContextProvider;
 
-export function getSchemaParts(input: string): Array<string> | undefined {
+function getSchemaParts(input: string): Array<string> | undefined {
     let re = new RegExp('^iglu:([a-zA-Z0-9-_.]+|\\.)\\/([a-zA-Z0-9-_]+|\\.)\\/([a-zA-Z0-9-_]+|\\.)\\/([0-9]+-[0-9]+-[0-9]|\\.)$');
     let matches = re.exec(input);
     if (matches !== null) {
@@ -61,11 +61,11 @@ export function isSelfDescribingJson(input: any) : boolean {
     return false;
 }
 
-export function isObject(input: any) : boolean {
+function isObject(input: any) : boolean {
     return input && typeof input === 'object' && input.constructor === Object;
 }
 
-export function isRuleSet(input: any) : boolean {
+function isRuleSet(input: any) : boolean {
     let methodCount = 0;
     if (isObject(input)) {
         if (has(input, 'accept')) {
@@ -87,25 +87,25 @@ export function isRuleSet(input: any) : boolean {
     return false;
 }
 
-export function isContextGenerator(input: any) : boolean {
+function isContextGenerator(input: any) : boolean {
     if (typeof(input) === 'function') {
         return input.length === 1;
     }
     return false;
 }
 
-export function isContextFilter(input: any) : boolean {
+function isContextFilter(input: any) : boolean {
     if (typeof(input) === 'function') {
         return input.length === 1;
     }
     return false;
 }
 
-export function isContextPrimitive(input: any) : boolean {
+function isContextPrimitive(input: any) : boolean {
     return (isContextGenerator(input) || isSelfDescribingJson(input));
 }
 
-export function isFilterContextProvider(input: any) : boolean {
+function isFilterContextProvider(input: any) : boolean {
     if (Array.isArray(input)) {
         if (input.length === 2) {
             return isContextFilter(input[0]) && isContextPrimitive(input[1]);
@@ -114,14 +114,14 @@ export function isFilterContextProvider(input: any) : boolean {
     return false;
 }
 
-export function isPathContextProvider(input: any) : boolean {
+function isPathContextProvider(input: any) : boolean {
     if (Array.isArray(input) && input.length === 2) {
         return isRuleSet(input[0]) && isContextPrimitive(input[1]);
     }
     return false;
 }
 
-export function isConditionalContextProvider(input: any) : boolean {
+function isConditionalContextProvider(input: any) : boolean {
     return isFilterContextProvider(input) || isPathContextProvider(input);
 }
 
