@@ -10,7 +10,6 @@ import {decode} from "punycode";
  */
 export type ContextGenerator = (payload: SelfDescribingJson, eventType: string, schema: string) => SelfDescribingJson;
 export type ContextPrimitive = SelfDescribingJson | ContextGenerator;
-// ContextFilter takes the event payload and relevant schema
 export type ContextFilter = (payload: SelfDescribingJson, eventType: string, schema: string) => boolean;
 export type FilterContextProvider = [ContextFilter, ContextPrimitive];
 interface RuleSet {
@@ -246,28 +245,20 @@ export function contextModule() {
     }
 
     return {
-        addConditionalContexts: function (contexts: Array<any>) {
-            let acceptedContexts : ConditionalContextProvider[] = [];
-            for (let context of contexts) {
-                if (isConditionalContextProvider(context)) {
-                    acceptedContexts.concat(context);
-                } else {
-                    // error message here?
-                }
-            }
-            conditionalProviders = conditionalProviders.concat(acceptedContexts);
-        },
-
         addGlobalContexts: function (contexts: Array<any>) {
-            let acceptedContexts : ContextPrimitive[] = [];
+            let acceptedConditionalContexts : ConditionalContextProvider[] = [];
+            let acceptedContextPrimitives : ContextPrimitive[] = [];
             for (let context of contexts) {
                 if (isContextPrimitive(context)) {
-                    acceptedContexts.concat(context);
+                    acceptedContextPrimitives.concat(context);
+                } else if (isConditionalContextProvider(context)) {
+                    acceptedConditionalContexts.concat(context);
                 } else {
                     // error message here?
                 }
             }
-            globalPrimitives = globalPrimitives.concat(acceptedContexts);
+            globalPrimitives = globalPrimitives.concat(acceptedContextPrimitives);
+            conditionalProviders = conditionalProviders.concat(acceptedConditionalContexts);
         },
 
         clearAllContexts: function () {
@@ -275,19 +266,15 @@ export function contextModule() {
             globalPrimitives = [];
         },
 
-        removeGlobalContext: function (context: ContextPrimitive) {
-            if (isContextPrimitive(context)) {
-                globalPrimitives = globalPrimitives.filter(item => !isEqual(item, context));
-            } else {
-                // error message here?
-            }
-        },
-
-        removeConditionalContext: function (context: ConditionalContextProvider) {
-            if (isConditionalContextProvider(context)) {
-                conditionalProviders = conditionalProviders.filter(item => !isEqual(item, context));
-            } else {
-                // error message here?
+        removeGlobalContexts: function (contexts: Array<any>) {
+            for (let context of contexts) {
+                if (isContextPrimitive(context)) {
+                    globalPrimitives = globalPrimitives.filter(item => !isEqual(item, context));
+                } else if (isConditionalContextProvider(context)) {
+                    conditionalProviders = conditionalProviders.filter(item => !isEqual(item, context));
+                } else {
+                    // error message here?
+                }
             }
         },
 

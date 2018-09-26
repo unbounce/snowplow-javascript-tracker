@@ -977,16 +977,12 @@ export function trackerCore(base64: boolean, callback?: (PayloadData) => void) {
             contextModule.addGlobalContexts(contexts);
         },
 
-        addConditionalContexts: function(contexts: Array<Object>) {
-            contextModule.addConditionalContexts(contexts);
-        },
-
         clearGlobalContexts: function() {
             contextModule.clearAllContexts();
         },
 
-        removeGlobalContext: function(context: Array<Object>) {
-            contextModule.removeGlobalContext(context);
+        removeGlobalContexts: function(contexts: Array<Object>) {
+            contextModule.removeGlobalContexts(contexts);
 		}
 	};
 }
