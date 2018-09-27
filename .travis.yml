@@ -14,9 +14,9 @@ install:
 
 - rm -rf node_modules
 - npm install
-- npm install ./core --quiet --save # Must be cleaned from package.json before deploy
-- npm dedupe
-- npm shrinkwrap --also=dev
+#- npm install ./core --quiet --save # Must be cleaned from package.json before deploy
+#- npm dedupe
+#- npm shrinkwrap --also=dev
 - wget https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-amd64.zip
 - unzip ./ngrok-stable-linux-amd64.zip
 before_script:
