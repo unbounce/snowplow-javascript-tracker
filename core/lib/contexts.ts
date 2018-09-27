@@ -233,7 +233,7 @@ export function contextModule() {
                 }
             } else if (isPathContextProvider(provider)) {
                 if (matchSchemaAgainstRuleSet((provider as PathContextProvider)[0], eventSchema)) {
-                    let generatedContext = generateContext((provider as PathContextProvider)[1], event, eventType, eventSchema)
+                    let generatedContext = generateContext((provider as PathContextProvider)[1], event, eventType, eventSchema);
                     if (generatedContext) {
                         contexts = contexts.concat(generatedContext);
                     }
