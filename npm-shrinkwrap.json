@@ -1164,6 +1164,74 @@
       "from": "graceful-readlink@>=1.0.0",
       "resolved": "https://registry.npmjs.org/graceful-readlink/-/graceful-readlink-1.0.1.tgz"
     },
+    "grunt": {
+      "version": "0.4.5",
+      "from": "grunt@0.4.5",
+      "resolved": "https://registry.npmjs.org/grunt/-/grunt-0.4.5.tgz",
+      "dependencies": {
+        "lodash": {
+          "version": "0.9.2",
+          "from": "lodash@>=0.9.2 <0.10.0",
+          "resolved": "https://registry.npmjs.org/lodash/-/lodash-0.9.2.tgz"
+        }
+      }
+    },
+    "grunt-aws": {
+      "version": "0.6.2",
+      "from": "grunt-aws@0.6.2",
+      "resolved": "https://registry.npmjs.org/grunt-aws/-/grunt-aws-0.6.2.tgz",
+      "dependencies": {
+        "async": {
+          "version": "0.2.10",
+          "from": "async@>=0.2.9 <0.3.0",
+          "resolved": "https://registry.npmjs.org/async/-/async-0.2.10.tgz"
+        },
+        "lodash": {
+          "version": "1.3.1",
+          "from": "lodash@>=1.3.1 <1.4.0",
+          "resolved": "https://registry.npmjs.org/lodash/-/lodash-1.3.1.tgz"
+        }
+      }
+    },
+    "grunt-browserify": {
+      "version": "5.0.0",
+      "from": "grunt-browserify@5.0.0",
+      "resolved": "https://registry.npmjs.org/grunt-browserify/-/grunt-browserify-5.0.0.tgz",
+      "dependencies": {
+        "async": {
+          "version": "1.5.2",
+          "from": "async@>=1.5.0 <2.0.0",
+          "resolved": "https://registry.npmjs.org/async/-/async-1.5.2.tgz"
+        },
+        "glob": {
+          "version": "6.0.4",
+          "from": "glob@>=6.0.3 <7.0.0",
+          "resolved": "https://registry.npmjs.org/glob/-/glob-6.0.4.tgz"
+        },
+        "lodash": {
+          "version": "3.10.1",
+          "from": "lodash@>=3.10.1 <4.0.0",
+          "resolved": "https://registry.npmjs.org/lodash/-/lodash-3.10.1.tgz"
+        },
+        "minimatch": {
+          "version": "3.0.4",
+          "from": "minimatch@>=2.0.0 <3.0.0||>=3.0.0 <4.0.0",
+          "resolved": "https://registry.npmjs.org/minimatch/-/minimatch-3.0.4.tgz"
+        }
+      }
+    },
+    "grunt-contrib-concat": {
+      "version": "0.5.1",
+      "from": "grunt-contrib-concat@0.5.1",
+      "resolved": "https://registry.npmjs.org/grunt-contrib-concat/-/grunt-contrib-concat-0.5.1.tgz",
+      "dependencies": {
+        "source-map": {
+          "version": "0.3.0",
+          "from": "source-map@>=0.3.0 <0.4.0",
+          "resolved": "https://registry.npmjs.org/source-map/-/source-map-0.3.0.tgz"
+        }
+      }
+    },
     "grunt-legacy-log": {
       "version": "0.1.3",
       "from": "grunt-legacy-log@>=0.1.0 <0.2.0",
@@ -1209,6 +1277,11 @@
           "resolved": "https://registry.npmjs.org/lodash/-/lodash-0.9.2.tgz"
         }
       }
+    },
+    "grunt-yui-compressor": {
+      "version": "0.4.0",
+      "from": "git://github.com/snowplow/grunt-yui-compressor.git#fc70c3aa41bad8848b3569d6ea6ee70d270fd8a6",
+      "resolved": "git://github.com/snowplow/grunt-yui-compressor.git#fc70c3aa41bad8848b3569d6ea6ee70d270fd8a6"
     },
     "gulp-sourcemaps": {
       "version": "1.6.0",
@@ -1383,6 +1456,28 @@
           "version": "1.6.2",
           "from": "concat-stream@>=1.6.1 <2.0.0",
           "resolved": "https://registry.npmjs.org/concat-stream/-/concat-stream-1.6.2.tgz"
+        }
+      }
+    },
+    "intern": {
+      "version": "3.3.2",
+      "from": "intern@3.3.2",
+      "resolved": "https://registry.npmjs.org/intern/-/intern-3.3.2.tgz",
+      "dependencies": {
+        "glob": {
+          "version": "7.0.3",
+          "from": "glob@7.0.3",
+          "resolved": "https://registry.npmjs.org/glob/-/glob-7.0.3.tgz"
+        },
+        "minimatch": {
+          "version": "3.0.4",
+          "from": "minimatch@>=2.0.0 <3.0.0||>=3.0.0 <4.0.0",
+          "resolved": "https://registry.npmjs.org/minimatch/-/minimatch-3.0.4.tgz"
+        },
+        "source-map": {
+          "version": "0.1.33",
+          "from": "source-map@0.1.33",
+          "resolved": "https://registry.npmjs.org/source-map/-/source-map-0.1.33.tgz"
         }
       }
     },
@@ -1619,10 +1714,20 @@
         }
       }
     },
+    "js-base64": {
+      "version": "2.1.9",
+      "from": "js-base64@2.1.9",
+      "resolved": "https://registry.npmjs.org/js-base64/-/js-base64-2.1.9.tgz"
+    },
     "js-yaml": {
       "version": "2.0.5",
       "from": "js-yaml@>=2.0.5 <2.1.0",
       "resolved": "https://registry.npmjs.org/js-yaml/-/js-yaml-2.0.5.tgz"
+    },
+    "JSON": {
+      "version": "1.0.0",
+      "from": "JSON@1.0.0",
+      "resolved": "https://registry.npmjs.org/JSON/-/JSON-1.0.0.tgz"
     },
     "json-stable-stringify": {
       "version": "0.0.1",
@@ -2608,20 +2713,10 @@
           "from": "@types/uuid@>=2.0.29 <3.0.0",
           "resolved": "https://registry.npmjs.org/@types/uuid/-/uuid-2.0.30.tgz"
         },
-        "lodash.get": {
-          "version": "4.4.2",
-          "from": "lodash.get@>=4.4.2 <5.0.0",
-          "resolved": "https://registry.npmjs.org/lodash.get/-/lodash.get-4.4.2.tgz"
-        },
-        "lodash.has": {
-          "version": "4.5.2",
-          "from": "lodash.has@>=4.5.2 <5.0.0",
-          "resolved": "https://registry.npmjs.org/lodash.has/-/lodash.has-4.5.2.tgz"
-        },
-        "lodash.isequal": {
-          "version": "4.5.0",
-          "from": "lodash.isequal@>=4.5.0 <5.0.0",
-          "resolved": "https://registry.npmjs.org/lodash.isequal/-/lodash.isequal-4.5.0.tgz"
+        "lodash": {
+          "version": "4.17.11",
+          "from": "lodash@latest",
+          "resolved": "https://registry.npmjs.org/lodash/-/lodash-4.17.11.tgz"
         },
         "uuid": {
           "version": "2.0.3",
