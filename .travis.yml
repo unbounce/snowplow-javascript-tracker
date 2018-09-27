@@ -2,9 +2,6 @@ node_js:
 - 8.12.0
 language: node_js
 install:
-- nvm update --lts node
-- nvm update node
-- nvm update npm
 - npm install -g npm@6.4.1
 - npm install -g grunt-cli
 
@@ -16,7 +13,7 @@ install:
 - cd ..
 
 - rm -rf node_modules
-- npm install --no-optional
+- npm install
 - npm install ./core --quiet --save # Must be cleaned from package.json before deploy
 - npm dedupe
 - npm shrinkwrap --also=dev
