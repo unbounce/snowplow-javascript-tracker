@@ -35,8 +35,8 @@
 ;(function() {
 
 	var map = require('lodash/map'),
-		isUndefined = require('lodash/isundefined'),
-		isFunction = require('lodash/isfunction'),
+		isUndefined = require('lodash/isUndefined'),
+		isFunction = require('lodash/isFunction'),
 		helpers = require('./lib/helpers'),
 
 		object = typeof exports !== 'undefined' ? exports : this; // For eventual node.js environment support
