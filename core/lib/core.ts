@@ -133,6 +133,19 @@ export function trackerCore(base64: boolean, callback?: (PayloadData) => void) {
 	}
 
 	/**
+	 * Adds all global contexts to a contexts array
+	 *
+	 * @param sb PayloadData
+	 * @param contexts Array<SelfDescribingJson>
+	 */
+	function attachGlobalContexts(sb: PayloadData, contexts?: Array<SelfDescribingJson>): Array<SelfDescribingJson> | undefined{
+		if (contexts && contexts.length) {
+			var globalContexts = getAllContexts(sb);
+			return contexts.concat(globalContexts);
+		}
+	}
+
+	/**
 	 * Gets called by every trackXXX method
 	 * Adds context and payloadPairs name-value pairs to the payload
 	 * Applies the callback to the built payload
@@ -147,7 +160,8 @@ export function trackerCore(base64: boolean, callback?: (PayloadData) => void) {
 		sb.add('eid', uuid.v4());
         var timestamp = getTimestamp(tstamp);
 		sb.add(timestamp.type, timestamp.value.toString());
-		var wrappedContexts = completeContexts(context);
+		var allContexts = attachGlobalContexts(sb, context);
+		var wrappedContexts = completeContexts(allContexts);
 		if (wrappedContexts !== undefined) {
 			sb.addJson('cx', 'co', wrappedContexts);
 		}
