@@ -34,10 +34,10 @@
 
 ;(function() {
 
-	var
-		mapValues = require('lodash/mapValues'),
+	var mapValues = require('lodash/mapValues'),
 		isString = require('lodash/isString'),
 		map = require('lodash/map'),
+		isArray = require('lodash/isArray'),
 		localStorageAccessible = require('./lib/detectors').localStorageAccessible,
 		helpers = require('./lib/helpers'),
 		object = typeof exports !== 'undefined' ? exports : this; // For eventual node.js environment support
