@@ -76,8 +76,7 @@
 	// Load all our modules (at least until we fully modularize & remove grunt-concat)
 	var
 		uuid = require('uuid'),
-		forEach = require('lodash/forEach'),
-		filter = require('lodash/filter'),
+		lodash = require('./lib_managed/lodash'),
 		helpers = require('./lib/helpers'),
 		queue = require('./in_queue'),
 		tracker = require('./tracker'),
@@ -128,7 +127,7 @@
 			var now;
 
 			// Flush all POST queues
-			forEach(mutSnowplowState.bufferFlushers, function (flusher) {
+			lodash.forEach(mutSnowplowState.bufferFlushers, function (flusher) {
 				flusher();
 			});
 
@@ -141,7 +140,7 @@
 				//     while (Date.now() < mutSnowplowState.expireDateTime) { }
 				do {
 					now = new Date();
-					if (filter(mutSnowplowState.outQueues, function (queue) {
+					if (lodash.filter(mutSnowplowState.outQueues, function (queue) {
 						return queue.length > 0;
 					}).length === 0) {
 						break;

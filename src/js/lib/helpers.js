@@ -33,10 +33,8 @@
  */
 ;(function () {
 
-	var isArray = require('lodash/isArray'),
-		isObject = require('lodash/isObject'),
-		isString = require('lodash/isString'),
-		isUndefined = require('lodash/isUndefined'),
+	var 
+		lodash = require('../lib_managed/lodash'),
 		cookie = require('browser-cookie-lite'),
 
 		object = typeof exports !== 'undefined' ? exports : this; // For eventual node.js environment support
@@ -45,11 +43,11 @@
 	 * Cleans up the page title
 	 */
 	object.fixupTitle = function (title) {
-		if (!isString(title)) {
+		if (!lodash.isString(title)) {
 			title = title.text || '';
 
 			var tmp = document.getElementsByTagName('title');
-			if (tmp && !isUndefined(tmp[0])) {
+			if (tmp && !lodash.isUndefined(tmp[0])) {
 				title = tmp[0].text;
 			}
 		}
@@ -195,7 +193,7 @@
 	object.getFilter = function (criterion, byClass) {
 
 		// If the criterion argument is not an object, add listeners to all elements
-		if (isArray(criterion) || !isObject(criterion)) {
+		if (lodash.isArray(criterion) || !lodash.isObject(criterion)) {
 			return function () {
 				return true;
 			};
@@ -206,7 +204,7 @@
 		} else {
 			var inclusive = criterion.hasOwnProperty('whitelist');
 			var specifiedClasses = criterion.whitelist || criterion.blacklist;
-			if (!isArray(specifiedClasses)) {
+			if (!lodash.isArray(specifiedClasses)) {
 				specifiedClasses = [specifiedClasses];
 			}
 
@@ -234,7 +232,7 @@
 	 * @param object criterion {transform: function (elt) {return the result of transform function applied to element}
 	 */
 	object.getTransform = function (criterion) {
-		if (!isObject(criterion)) {
+		if (!lodash.isObject(criterion)) {
 			return function(x) { return x };
 		}
 

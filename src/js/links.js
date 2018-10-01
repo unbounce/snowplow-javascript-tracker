@@ -32,7 +32,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-var isUndefined = require('lodash/isUndefined'),
+var lodash = require('./lib_managed/lodash'),
 	helpers = require('./lib/helpers'),
 	object = typeof exports !== 'undefined' ? exports : this;
 
@@ -75,12 +75,12 @@ object.getLinkTrackingManager = function (core, trackerId, contextAdder) {
 			elementContent;
 
 		while ((parentElement = sourceElement.parentNode) !== null &&
-				!isUndefined(parentElement) && // buggy IE5.5
+				!lodash.isUndefined(parentElement) && // buggy IE5.5
 				((tag = sourceElement.tagName.toUpperCase()) !== 'A' && tag !== 'AREA')) {
 			sourceElement = parentElement;
 		}
 
-		if (!isUndefined(sourceElement.href)) {
+		if (!lodash.isUndefined(sourceElement.href)) {
 			// browsers, such as Safari, don't downcase hostname and href
 			var originalSourceHostName = sourceElement.hostname || helpers.getHostName(sourceElement.href),
 				sourceHostName = originalSourceHostName.toLowerCase(),

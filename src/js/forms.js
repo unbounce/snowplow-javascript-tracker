@@ -32,8 +32,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-var forEach = require('lodash/forEach'),
-	find = require('lodash/find'),
+var lodash = require('./lib_managed/lodash'),
 	helpers = require('./lib/helpers'),
 	object = typeof exports !== 'undefined' ? exports : this;
 
@@ -66,7 +65,7 @@ object.getFormTrackingManager = function (core, trackerId, contextAdder) {
 	 * Get an identifier for a form, input, textarea, or select element
 	 */
 	function getFormElementName(elt) {
-		return elt[find(['name', 'id', 'type', 'nodeName'], function (propName) {
+		return elt[lodash.find(['name', 'id', 'type', 'nodeName'], function (propName) {
 
 			// If elt has a child whose name is "id", that element will be returned
 			// instead of the actual id of elt unless we ensure that a string is returned
@@ -91,13 +90,13 @@ object.getFormTrackingManager = function (core, trackerId, contextAdder) {
 	 */
 	function getInnerFormElements(elt) {
 		var innerElements = [];
-		forEach(innerElementTags, function (tagname) {
+		lodash.forEach(innerElementTags, function (tagname) {
 
-			var trackedChildren = filter(elt.getElementsByTagName(tagname), function (child) {
+			var trackedChildren = lodash.filter(elt.getElementsByTagName(tagname), function (child) {
 				return child.hasOwnProperty(trackingMarker);
 			});
 
-			forEach(trackedChildren, function (child) {
+			lodash.forEach(trackedChildren, function (child) {
 				if (child.type === 'submit') {
 					return;
 				}
@@ -139,7 +138,7 @@ object.getFormTrackingManager = function (core, trackerId, contextAdder) {
 		return function (e) {
 			var elt = e.target;
 			var innerElements = getInnerFormElements(elt);
-			forEach(innerElements, function (innerElement) {
+			lodash.forEach(innerElements, function (innerElement) {
 				innerElement.value = fieldTransform(innerElement.value);
 			});
 			core.trackFormSubmission(getFormElementName(elt), helpers.getCssClasses(elt), innerElements, contextAdder(context));
@@ -164,11 +163,11 @@ object.getFormTrackingManager = function (core, trackerId, contextAdder) {
 		 * Add value change event listeners to all mutable inner form elements
 		 */
 		addFormListeners: function (context) {
-			forEach(document.getElementsByTagName('form'), function (form) {
+			lodash.forEach(document.getElementsByTagName('form'), function (form) {
 				if (formFilter(form) && !form[trackingMarker]) {
 
-					forEach(innerElementTags, function (tagname) {
-						forEach(form.getElementsByTagName(tagname), function (innerElement) {
+					lodash.forEach(innerElementTags, function (tagname) {
+						lodash.forEach(form.getElementsByTagName(tagname), function (innerElement) {
 							if (fieldFilter(innerElement) && !innerElement[trackingMarker] && innerElement.type.toLowerCase() !== 'password') {
 								helpers.addEventListener(innerElement, 'change', getFormChangeListener(context), false);
 								innerElement[trackingMarker] = true;
