@@ -984,7 +984,7 @@ export function trackerCore(base64: boolean, callback?: (PayloadData) => void) {
 			}, context ? context.concat([documentJson]) : [documentJson], tstamp);
 		},
 
-        addGlobalContext: function(contexts: Array<Object>) {
+        addGlobalContexts: function(contexts: Array<Object>) {
             contextModule.addGlobalContexts(contexts);
         },
 

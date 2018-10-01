@@ -2639,7 +2639,7 @@
 			 *
 			 * @param Array<ContextPrimitive | ConditionalContextProvider> contexts
              */
-            addGlobalContext: core.addGlobalContexts,
+            addGlobalContexts: core.addGlobalContexts,
 
             /**
              * All provided contexts will no longer be sent with every event
