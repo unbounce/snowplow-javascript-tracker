@@ -2636,21 +2636,21 @@
             /**
 			 * All provided contexts will be sent with every event
 			 *
-			 * @param Array<ContextPrimitive | ConditionalContextProvider> contexts
+			 * @param contexts Array<ContextPrimitive | ConditionalContextProvider>
              */
-            addGlobalContexts: core.addGlobalContexts,
+            addGlobalContexts: function (contexts) { core.addGlobalContexts(contexts); },
 
             /**
              * All provided contexts will no longer be sent with every event
              *
-             * @param Array<ContextPrimitive | ConditionalContextProvider> contexts
+             * @param contexts Array<ContextPrimitive | ConditionalContextProvider>
              */
-            removeGlobalContexts: core.removeGlobalContexts,
+            removeGlobalContexts: function (contexts) { core.removeGlobalContexts(contexts); },
 
 			/**
 			 * Clear all global contexts that are sent with events
 			 */
-			clearGlobalContexts: core.clearGlobalContexts,
+			clearGlobalContexts: function () { core.clearGlobalContexts(); },
 
 			/**
 			 * Enable tracking of unhandled exceptions with custom contexts
