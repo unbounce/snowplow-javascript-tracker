@@ -139,9 +139,11 @@ export function trackerCore(base64: boolean, callback?: (PayloadData) => void) {
 	 * @param contexts Array<SelfDescribingJson>
 	 */
 	function attachGlobalContexts(sb: PayloadData, contexts?: Array<SelfDescribingJson>): Array<SelfDescribingJson> | undefined{
+        var globalContexts = getAllContexts(sb);
 		if (contexts && contexts.length) {
-			var globalContexts = getAllContexts(sb);
 			return contexts.concat(globalContexts);
+		} else {
+			return globalContexts;
 		}
 	}
 
