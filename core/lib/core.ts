@@ -139,7 +139,9 @@ export function trackerCore(base64: boolean, callback?: (PayloadData) => void) {
 	 * @param contexts Array<SelfDescribingJson>
 	 */
 	function attachGlobalContexts(sb: PayloadData, contexts?: Array<SelfDescribingJson>): Array<SelfDescribingJson> | undefined{
-        var globalContexts = getAllContexts(sb);
+        console.log("attachGlobalContexts called!");
+		var globalContexts = getAllContexts(sb);
+        console.log(`global contexts: ${JSON.stringify(globalContexts, undefined, 2)}`);
 		if (contexts && contexts.length) {
 			return contexts.concat(globalContexts);
 		} else {
