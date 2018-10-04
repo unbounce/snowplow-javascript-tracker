@@ -42,7 +42,8 @@ module.exports = function (grunt) {
                     suites: [
                         'tests/unit/base64.js',
                         'tests/unit/payload.js',
-                        'tests/unit/core.js'
+                        'tests/unit/core.js',
+                        'tests/unit/contexts.js'
                     ]
                 }
             }
