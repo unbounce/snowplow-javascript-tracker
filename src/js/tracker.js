@@ -35,7 +35,8 @@
 ;(function() {
 
 	var
-		lodash = require('./lib_managed/lodash'),
+		forEach = require('lodash/forEach'),
+		map = require('lodash/map'),
 		helpers = require('./lib/helpers'),
 		proxies = require('./lib/proxies'),
 		cookie = require('browser-cookie-lite'),
@@ -829,14 +830,14 @@
 
 				if (autoContexts.optimizelySummary) {
 					var activeExperiments = getOptimizelySummaryContexts();
-                    lodash.forEach(activeExperiments, function (e) {
+                    forEach(activeExperiments, function (e) {
 						combinedContexts.push(e)
 					})
 				}
 
 				if (autoContexts.optimizelyXSummary) {
 					var activeExperiments = getOptimizelyXSummaryContexts();
-                    lodash.forEach(activeExperiments, function (e) {
+                    forEach(activeExperiments, function (e) {
 						combinedContexts.push(e);
 					})
 				}
@@ -1020,7 +1021,7 @@
 			var state = getOptimizelyData('state');
 			var experiments = getOptimizelyData('experiments');
 
-			return lodash.map(state && experiments && state.activeExperiments, function (activeExperiment) {
+			return map(state && experiments && state.activeExperiments, function (activeExperiment) {
 				var current = experiments[activeExperiment];
 				return {
 					activeExperimentId: activeExperiment.toString(),
@@ -1044,7 +1045,7 @@
 			var experiments = getOptimizelyXData('data', 'experiments');
 			var visitor = getOptimizelyXData('visitor');
 
-			return lodash.map(experiment_ids, function(activeExperiment) {
+			return map(experiment_ids, function(activeExperiment) {
 				variation = state.getVariationMap()[activeExperiment];
 				variationName = variation.name;
 				variationId = variation.id;
@@ -1255,7 +1256,7 @@
 		 * @returns Array of custom contexts
 		 */
 		function getOptimizelySummaryContexts() {
-			return lodash.map(getOptimizelySummary(), function (experiment) {
+			return map(getOptimizelySummary(), function (experiment) {
 				return {
 					schema: 'iglu:com.optimizely.snowplow/optimizely_summary/jsonschema/1-0-0',
 					data: experiment
@@ -1270,7 +1271,7 @@
 		 * @returns Array of custom contexts
 		 */
 		function getOptimizelyXSummaryContexts() {
-			return lodash.map(getOptimizelyXSummary(), function (experiment) {
+			return map(getOptimizelyXSummary(), function (experiment) {
 				return {
 					schema: 'iglu:com.optimizely.optimizelyx/summary/jsonschema/1-0-0',
 					data: experiment
@@ -1406,7 +1407,7 @@
 		 */
 		function getGaCookiesContext() {
 			var gaCookieData = {};
-			lodash.forEach(['__utma', '__utmb', '__utmc', '__utmv', '__utmz', '_ga'], function (cookieType) {
+			forEach(['__utma', '__utmb', '__utmc', '__utmv', '__utmz', '_ga'], function (cookieType) {
 				var value = cookie.cookie(cookieType);
 				if (value) {
 					gaCookieData[cookieType] = value;
