@@ -90,6 +90,7 @@
 		var
 			// Tracker core
 			core = coreConstructor(true, function(payload) {
+				console.log("core constructor debug message");
 				addBrowserData(payload);
 				sendRequest(payload, configTrackerPause);
 			}),

@@ -240,6 +240,7 @@ export function contextModule() {
                 }
             }
         }
+        console.log("Length of contexts: " + contexts.length);
         return contexts;
     }
 
@@ -280,6 +281,7 @@ export function contextModule() {
         getApplicableContexts: function (event: PayloadData) : Array<SelfDescribingJson> {
             const builtEvent = event.build();
             if (isSelfDescribingJson(builtEvent)) {
+                console.log("getApplicableContexts: isSelfDescribingJson - true");
                 const decodedEvent = getDecodedEvent(builtEvent as SelfDescribingJson);
                 return assembleAllContexts(decodedEvent);
             } else {
