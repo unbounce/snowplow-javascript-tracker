@@ -23,6 +23,7 @@ install:
 before_script:
 - export SUBDOMAIN=$RANDOM$RANDOM
 - ./ngrok http -authtoken $NGROK_AUTH -subdomain $SUBDOMAIN -log=stdout 8500 > /dev/null &
+- java -jar snowplow_micro.jar
 script:
 - cd core && grunt intern && cd ..
 - grunt travis

@@ -179,7 +179,8 @@ module.exports = function(grunt) {
           runType: 'runner',
           functionalSuites: [
             'tests/functional/detectors.js',
-            'tests/functional/helpers.js'
+            'tests/functional/helpers.js',
+            'tests/functional/events.js'
           ]
         }
       },
