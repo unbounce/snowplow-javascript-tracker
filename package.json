@@ -22,7 +22,6 @@
     "grunt-contrib-uglify": "^4.0.0",
     "intern": "3.3.2",
     "js-base64": "^2.4.9",
-    "lodash": "^4.17.11",
     "request": "^2.88.0",
     "semver": "4.3.2"
   },
