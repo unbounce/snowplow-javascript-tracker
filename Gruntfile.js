@@ -128,8 +128,10 @@ module.exports = function(grunt) {
         options: {
           'process': true
         },
-        src: ['tests/pages/integration-template.html'],
-        dest: 'tests/pages/integration.html'
+        files: {
+          'tests/pages/integration.html' : ['tests/pages/integration-template.html'],
+          'tests/pages/events.html' : ['tests/pages/events-template.html']
+        }
       },
       local: {
         options: {
@@ -137,8 +139,10 @@ module.exports = function(grunt) {
             return src.replace(/'\<\%= subdomain \%\>' \+ '\.ngrok\.io'/g, '\'127.0.0.1:8000\'');
           }
         },
-        src: ['tests/pages/integration-template.html'],
-        dest: 'tests/local/serve/integration.html'
+        files: {
+          'tests/local/serve/integration.html' : ['tests/pages/integration-template.html'],
+          'tests/local/serve/events.html' : ['tests/pages/events-template.html']
+        }
       }
     },
 

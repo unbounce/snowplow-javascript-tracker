@@ -112,7 +112,9 @@ define([
 
         'Check custom structured event': async function() {
             resetMicro();
-            this.remote.execute("window.snowplow('trackStructEvent', 'Mixes', 'Play', 'MRC/fabric-0503-mix', '', '0.0');");
+            this.remote
+                .get(require.toUrl('tests/pages/events.html'))
+                .execute("window.snowplow('trackStructEvent', 'Mixes', 'Play', 'MRC/fabric-0503-mix', '', '0.0');");
 
             try {
                 let events = await getValidEvents(null, null, { eventType: "se" });
@@ -143,7 +145,9 @@ define([
 
         'Check custom unstructured (self describing) event -- an application install event': async function() {
             resetMicro();
-            this.remote.execute(`window.snowplow('trackSelfDescribingEvent', { "schema": "${APPLICATION_INSTALL_EVENT}", "data": {} });`);
+            this.remote
+                .get(require.toUrl('tests/pages/events.html'))
+                .execute(`window.snowplow('trackSelfDescribingEvent', { "schema": "${APPLICATION_INSTALL_EVENT}", "data": {} });`);
 
             try {
                 let events = await getValidEvents(null, null, { eventType: "ue" });
@@ -178,7 +182,9 @@ define([
                     "id": "functionalTestScreenID"
                 }
             }, null, 2);
-            this.remote.execute(`window.snowplow('trackSelfDescribingEvent', ${sdj});`);
+            this.remote
+                .get(require.toUrl('tests/pages/events.html'))
+                .execute(`window.snowplow('trackSelfDescribingEvent', ${sdj});`);
 
             try {
                 let events = await getValidEvents(null, null, { eventType: "ue" });
@@ -229,7 +235,9 @@ define([
                         }
                     }
                 ], null, 2);
-            this.remote.execute(`window.snowplow('trackPageView', null, ${screenContext});`);
+            this.remote
+                .get(require.toUrl('tests/pages/events.html'))
+                .execute(`window.snowplow('trackPageView', null, ${screenContext});`);
 
             try {
                 let events = await getValidEvents(null, null, { eventType: "page_view" });
@@ -268,7 +276,9 @@ define([
                         }
                     }
                 ], null, 2);
-            this.remote.execute(`window.snowplow('trackPageView', null, ${appContext});`);
+            this.remote
+                .get(require.toUrl('tests/pages/events.html'))
+                .execute(`window.snowplow('trackPageView', null, ${appContext});`);
 
             try {
                 let events = await getValidEvents(null, null, { eventType: "page_view" });
