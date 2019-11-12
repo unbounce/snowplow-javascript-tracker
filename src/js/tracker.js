@@ -49,6 +49,7 @@
 		coreConstructor = require('snowplow-tracker-core').trackerCore,
 		productionize = require('./guard').productionize,
 		uuid = require('uuid'),
+		sentry = require('@sentry/browser'),
 
 		object = typeof exports !== 'undefined' ? exports : this; // For eventual node.js environment support
 
@@ -89,6 +90,8 @@
 	 * 25. maxLocalStorageQueueSize, 1000
 	 */
 	object.Tracker = function Tracker(functionName, namespace, version, mutSnowplowState, argmap) {
+
+		sentry.init({ dsn: 'https://a51e88199a744091a733426aa6fd64ec@sentry.snplow.net//7' });
 
 		/************************************************************
 		 * Private members
