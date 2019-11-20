@@ -1394,9 +1394,9 @@
 			}
 		}
 
-		/* Creates GDPR context Self-describing JSON object
-		*/
-
+		/**
+		 *  Creates GDPR context Self-describing JSON object
+		 */
 		function getGdprBasisContext() {
 			if (gdprBasisData.gdprBasis) {
 				return {
@@ -1406,6 +1406,20 @@
 						documentId: gdprBasisData.gdprDocId || null,
 						documentVersion: gdprBasisData.gdprDocVer || null,
 						documentDescription: gdprBasisData.gdprDocDesc || null
+					}
+				};
+			}
+		}
+
+		/**
+		 * Creates Recaptcha Token context for recaptcha enrichment
+		 */
+		function getRecaptchaTokenContext(recaptchaToken) {
+			if (recaptchaToken) {
+				return {
+					schema: 'iglu:com.google.recaptcha/token/jsonschema/1-0-0',
+					data: {
+						token: recaptchaToken
 					}
 				};
 			}
@@ -2283,6 +2297,22 @@
 			trackCallback(function () {
 				core.trackSelfDescribingEvent(eventJson, addCommonContexts(context), tstamp);
 			});
+		};
+
+		/**
+		 * Track a recaptcha token, this can be verified and scored with enrichment
+		 * 
+		 * @param object token Contains the token returned from reCaptcha v3
+		 * @param object context Custom context relating to the event
+		 * @param tstamp number or Timestamp object
+		 */
+		apiMethods.trackRecaptchaToken = function (token, context, tstamp) {
+			var tokenContext = getRecaptchaTokenContext(token);
+			if (tokenContext) {
+				trackCallback(function () {
+					core.trackSelfDescribingEvent(tokenContext, addCommonContexts(context), tstamp);
+				});
+			}
 		};
 
 		/**
