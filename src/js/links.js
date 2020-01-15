@@ -32,9 +32,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-var isUndefined = require('lodash/isUndefined'),
-	helpers = require('./lib/helpers'),
-	object = typeof exports !== 'undefined' ? exports : this;
+import isUndefined  from 'lodash/isUndefined';
+import { getHostName, getCssClasses, resolveDynamicContexts, addEventListener, getFilter } from './lib/helpers';
 
 /**
  * Object for handling automatic link tracking
@@ -44,7 +43,7 @@ var isUndefined = require('lodash/isUndefined'),
  * @param function contextAdder Function to add common contexts like PerformanceTiming to all events
  * @return object linkTrackingManager instance
  */
-object.getLinkTrackingManager = function (core, trackerId, contextAdder) {
+export default function getLinkTrackingManager(core, trackerId, contextAdder) {
 
 	// Filter function used to determine whether clicks on a link should be tracked
 	var linkTrackingFilter,
@@ -82,7 +81,7 @@ object.getLinkTrackingManager = function (core, trackerId, contextAdder) {
 
 		if (!isUndefined(sourceElement.href)) {
 			// browsers, such as Safari, don't downcase hostname and href
-			var originalSourceHostName = sourceElement.hostname || helpers.getHostName(sourceElement.href),
+			var originalSourceHostName = sourceElement.hostname || getHostName(sourceElement.href),
 				sourceHostName = originalSourceHostName.toLowerCase(),
 				sourceHref = sourceElement.href.replace(originalSourceHostName, sourceHostName),
 				scriptProtocol = new RegExp('^(javascript|vbscript|jscript|mocha|livescript|ecmascript|mailto):', 'i');
@@ -91,13 +90,13 @@ object.getLinkTrackingManager = function (core, trackerId, contextAdder) {
 			if (!scriptProtocol.test(sourceHref)) {
 
 				elementId = sourceElement.id;
-				elementClasses = helpers.getCssClasses(sourceElement);
+				elementClasses = getCssClasses(sourceElement);
 				elementTarget = sourceElement.target;
 				elementContent = linkTrackingContent ? sourceElement.innerHTML : null;
 
 				// decodeUrl %xx
 				sourceHref = unescape(sourceHref);
-				core.trackLinkClick(sourceHref, elementId, elementClasses, elementTarget, elementContent, contextAdder(helpers.resolveDynamicContexts(context, sourceElement)));
+				core.trackLinkClick(sourceHref, elementId, elementClasses, elementTarget, elementContent, contextAdder(resolveDynamicContexts(context, sourceElement)));
 			}
 		}
 	}
@@ -141,10 +140,10 @@ object.getLinkTrackingManager = function (core, trackerId, contextAdder) {
 	function addClickListener(element) {
 		if (linkTrackingPseudoClicks) {
 			// for simplicity and performance, we ignore drag events
-			helpers.addEventListener(element, 'mouseup', getClickHandler(linkTrackingContext), false);
-			helpers.addEventListener(element, 'mousedown', getClickHandler(linkTrackingContext), false);
+			addEventListener(element, 'mouseup', getClickHandler(linkTrackingContext), false);
+			addEventListener(element, 'mousedown', getClickHandler(linkTrackingContext), false);
 		} else {
-			helpers.addEventListener(element, 'click', getClickHandler(linkTrackingContext), false);
+			addEventListener(element, 'click', getClickHandler(linkTrackingContext), false);
 		}
 	}
 
@@ -158,7 +157,7 @@ object.getLinkTrackingManager = function (core, trackerId, contextAdder) {
 			linkTrackingContent = trackContent;
 			linkTrackingContext = context;
 			linkTrackingPseudoClicks = pseudoClicks;
-			linkTrackingFilter = helpers.getFilter(criterion, true);
+			linkTrackingFilter = getFilter(criterion, true);
 		},
 
 		/*

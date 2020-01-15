@@ -32,13 +32,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-var isFunction = require('lodash/isFunction'),
-    helpers = require('./lib/helpers'),
-    object = typeof exports !== 'undefined' ? exports : this,
-	windowAlias = window;
+import isFunction from 'lodash/isFunction';
+import { addEventListener } from './lib/helpers';
 
+var	windowAlias = window;
 
-object.errorManager = function (core) {
+export default function getErrorManager(core) {
 
 	/**
 	 * Send error as self-describing event
@@ -121,7 +120,7 @@ object.errorManager = function (core) {
 				}
 			}
 
-			helpers.addEventListener(windowAlias, 'error', captureError, true);
+			addEventListener(windowAlias, 'error', captureError, true);
 		}
 	}
 };

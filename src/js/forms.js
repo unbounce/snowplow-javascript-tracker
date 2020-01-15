@@ -32,11 +32,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-var forEach = require('lodash/forEach'),
-	filter = require('lodash/filter'),
-	find = require('lodash/find'),
-	helpers = require('./lib/helpers'),
-	object = typeof exports !== 'undefined' ? exports : this;
+import forEach from 'lodash/forEach';
+import filter from 'lodash/filter';
+import find from 'lodash/find';
+import { getCssClasses, resolveDynamicContexts, getFilter, getTransform, addEventListener } from './lib/helpers';
 
 /**
  * Object for handling automatic form tracking
@@ -46,7 +45,7 @@ var forEach = require('lodash/forEach'),
  * @param function contextAdder Function to add common contexts like PerformanceTiming to all events
  * @return object formTrackingManager instance
  */
-object.getFormTrackingManager = function (core, trackerId, contextAdder) {
+export default function getFormTrackingManager(core, trackerId, contextAdder) {
 
 	// Tag names of mutable elements inside a form
 	var innerElementTags = ['textarea', 'input', 'select'];
@@ -130,7 +129,7 @@ object.getFormTrackingManager = function (core, trackerId, contextAdder) {
 			var type = (elt.nodeName && elt.nodeName.toUpperCase() === 'INPUT') ? elt.type : null;
 			var value = (elt.type === 'checkbox' && !elt.checked) ? null : fieldTransform(elt.value);
 			if (event_type === 'change_form' || (type !== 'checkbox' && type !== 'radio')) {
-				core.trackFormFocusOrChange(event_type, getParentFormName(elt), getFormElementName(elt), elt.nodeName, type, helpers.getCssClasses(elt), value, contextAdder(helpers.resolveDynamicContexts(context, elt, type, value)));
+				core.trackFormFocusOrChange(event_type, getParentFormName(elt), getFormElementName(elt), elt.nodeName, type, getCssClasses(elt), value, contextAdder(resolveDynamicContexts(context, elt, type, value)));
 			}
 		};
 	}
@@ -145,7 +144,7 @@ object.getFormTrackingManager = function (core, trackerId, contextAdder) {
 			forEach(innerElements, function (innerElement) {
 				innerElement.value = fieldTransform(innerElement.value);
 			});
-			core.trackFormSubmission(getFormElementName(elt), helpers.getCssClasses(elt), innerElements, contextAdder(helpers.resolveDynamicContexts(context, elt, innerElements)));
+			core.trackFormSubmission(getFormElementName(elt), getCssClasses(elt), innerElements, contextAdder(resolveDynamicContexts(context, elt, innerElements)));
 		};
 	}
 
@@ -156,9 +155,9 @@ object.getFormTrackingManager = function (core, trackerId, contextAdder) {
 		 */
 		configureFormTracking: function (config) {
 			if (config) {
-				formFilter = helpers.getFilter(config.forms, true);
-				fieldFilter = helpers.getFilter(config.fields, false);
-				fieldTransform = helpers.getTransform(config.fields);
+				formFilter = getFilter(config.forms, true);
+				fieldFilter = getFilter(config.fields, false);
+				fieldTransform = getTransform(config.fields);
 			}
 		},
 
@@ -173,14 +172,14 @@ object.getFormTrackingManager = function (core, trackerId, contextAdder) {
 					forEach(innerElementTags, function (tagname) {
 						forEach(form.getElementsByTagName(tagname), function (innerElement) {
 							if (fieldFilter(innerElement) && !innerElement[trackingMarker] && innerElement.type.toLowerCase() !== 'password') {
-								helpers.addEventListener(innerElement, 'focus', getFormChangeListener('focus_form', context), false);
-								helpers.addEventListener(innerElement, 'change', getFormChangeListener('change_form', context), false);
+								addEventListener(innerElement, 'focus', getFormChangeListener('focus_form', context), false);
+								addEventListener(innerElement, 'change', getFormChangeListener('change_form', context), false);
 								innerElement[trackingMarker] = true;
 							}
 						});
 					});
 
-					helpers.addEventListener(form, 'submit', getFormSubmissionListener(context));
+					addEventListener(form, 'submit', getFormSubmissionListener(context));
 					form[trackingMarker] = true;
 				}
 			});

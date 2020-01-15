@@ -32,11 +32,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-;(function(){
-
-	var
-		helpers = require('./helpers'),
-		object = typeof exports !== 'undefined' ? exports : this;
+	import { fromQuerystring, getHostName } from './helpers';
 
 	/*
 	 * Test whether a string is an IP address
@@ -72,7 +68,7 @@
 		// scheme : // [username [: password] @] hostname [: port] [/ [path] [? query] [# fragment]]
 		var e = new RegExp('^(?:https?|ftp)(?::/*(?:[^?]+))([?][^#]+)'),
 			matches = e.exec(url),
-			result = helpers.fromQuerystring(name, matches[1]);
+			result = fromQuerystring(name, matches[1]);
 
 		return result;
 	}
@@ -81,21 +77,20 @@
 	 * Fix-up URL when page rendered from search engine cache or translated page.
 	 * TODO: it would be nice to generalise this and/or move into the ETL phase.
 	 */
-	object.fixupUrl = function (hostName, href, referrer) {
+	export function fixupUrl(hostName, href, referrer) {
 
 		if (hostName === 'translate.googleusercontent.com') {       // Google
 			if (referrer === '') {
 				referrer = href;
 			}
 			href = getParameter(href, 'u');
-			hostName = helpers.getHostName(href);
+			hostName = getHostName(href);
 		} else if (hostName === 'cc.bingj.com' ||                   // Bing
 		hostName === 'webcache.googleusercontent.com' ||            // Google
 		isYahooCachedPage(hostName)) {                         // Yahoo (via Inktomi 74.6.0.0/16)
 			href = document.links[0].href;
-			hostName = helpers.getHostName(href);
+			hostName = getHostName(href);
 		}
 		return [hostName, href, referrer];
 	};
-
-}());
+	

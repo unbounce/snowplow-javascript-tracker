@@ -32,15 +32,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-;(function() {
-
-	var
-		map = require('lodash/map'),
-		isUndefined = require('lodash/isUndefined'),
-		isFunction = require('lodash/isFunction'),
-		helpers = require('./lib/helpers'),
-
-		object = typeof exports !== 'undefined' ? exports : this; // For eventual node.js environment support
+	import map from 'lodash/map';
+	import isUndefined from 'lodash/isUndefined';
+	import isFunction from 'lodash/isFunction';
+	import { warn } from './lib/helpers';
 
 	/************************************************************
 	 * Proxy object
@@ -48,7 +43,7 @@
 	 *   after the Tracker has been initialized and loaded
 	 ************************************************************/
 
-	object.InQueueManager = function(TrackerConstructor, version, mutSnowplowState, asyncQueue, functionName) {
+	export default function InQueueManager(TrackerConstructor, version, mutSnowplowState, asyncQueue, functionName) {
 
 		// Page view ID should be shared between all tracker instances
 		var trackerDictionary = {};
@@ -68,13 +63,13 @@
 					if (trackerDictionary.hasOwnProperty(names[i])) {
 						namedTrackers.push(trackerDictionary[names[i]]);
 					} else {
-						helpers.warn('Warning: Tracker namespace "' + names[i] + '" not configured');
+						warn('Warning: Tracker namespace "' + names[i] + '" not configured');
 					}
 				}
 			}
 
 			if (namedTrackers.length === 0) {
-				helpers.warn('Warning: No tracker configured');
+				warn('Warning: No tracker configured');
 			}
 
 			return namedTrackers;
@@ -90,7 +85,7 @@
 		 * TODO: remove this in 2.1.0
 		 */
 		function legacyCreateNewNamespace(f, endpoint, namespace) {
-			helpers.warn(f + ' is deprecated. Set the collector when a new tracker instance using newTracker.');
+			warn(f + ' is deprecated. Set the collector when a new tracker instance using newTracker.');
 
 			var name;
 
@@ -117,7 +112,7 @@
 				trackerDictionary[namespace] = new TrackerConstructor(functionName, namespace, version, mutSnowplowState, argmap);
 				trackerDictionary[namespace].setCollectorUrl(endpoint);
 			} else {
-				helpers.warn('Tracker namespace ' + namespace + ' already exists.');
+				warn('Tracker namespace ' + namespace + ' already exists.');
 			}
 		}
 
@@ -189,5 +184,3 @@
 			push: applyAsyncFunction
 		};
 	};
-
-}());

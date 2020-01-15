@@ -31,22 +31,18 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE 
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-;(function () {
 
-	var
-		filter = require('lodash/filter'),
-		isString = require('lodash/isString'),
-		isUndefined = require('lodash/isUndefined'),
-		isObject = require('lodash/isObject'),
-		map = require('lodash/map'),
-		cookie = require('browser-cookie-lite'),
-
-		object = typeof exports !== 'undefined' ? exports : this; // For eventual node.js environment support
+	import filter from 'lodash/filter';
+	import isString from 'lodash/isString';
+	import isUndefined from 'lodash/isUndefined';
+	import isObject from 'lodash/isObject';
+	import map from 'lodash/map';
+	import 'browser-cookie-lite';
 
 	/**
 	 * Cleans up the page title
 	 */
-	object.fixupTitle = function (title) {
+	export function fixupTitle(title) {
 		if (!isString(title)) {
 			title = title.text || '';
 
@@ -61,7 +57,7 @@
 	/**
 	 * Extract hostname from URL
 	 */
-	object.getHostName = function (url) {
+	export function getHostName(url) {
 		// scheme : // [username [: password] @] hostname [: port] [/ [path] [? query] [# fragment]]
 		var e = new RegExp('^(?:(?:https?|ftp):)/*(?:[^@]+@)?([^:/#]+)'),
 			matches = e.exec(url);
@@ -72,7 +68,7 @@
 	/**
 	 * Fix-up domain
 	 */
-	object.fixupDomain = function (domain) {
+	export function fixupDomain (domain) {
 		var dl = domain.length;
 
 		// remove trailing '.'
@@ -95,12 +91,12 @@
 	 * @param string oldLocation Optional.
 	 * @return string The referrer
 	 */
-	object.getReferrer = function (oldLocation) {
+	export function getReferrer(oldLocation) {
 
 		var referrer = '';
 		
-		var fromQs = object.fromQuerystring('referrer', window.location.href) ||
-		object.fromQuerystring('referer', window.location.href);
+		var fromQs = fromQuerystring('referrer', window.location.href) || 
+						fromQuerystring('referer', window.location.href);
 
 		// Short-circuit
 		if (fromQs) {
@@ -132,7 +128,7 @@
 	/**
 	 * Cross-browser helper function to add event handler
 	 */
-	object.addEventListener = function (element, eventType, eventHandler, useCapture) {
+	export function addEventListener(element, eventType, eventHandler, useCapture) {
 		if (element.addEventListener) {
 			element.addEventListener(eventType, eventHandler, useCapture);
 			return true;
@@ -146,7 +142,7 @@
 	/**
 	 * Return value from name-value pair in querystring 
 	 */
-	object.fromQuerystring = function (field, url) {
+	export function fromQuerystring(field, url) {
 		var match = new RegExp('^[^#]*[?&]' + field + '=([^&#]*)').exec(url);
 		if (!match) {
 			return null;
@@ -161,7 +157,7 @@
 	 * @param {(object|function(...*): ?object)[]} dynamicOrStaticContexts Array of custom context Objects or custom context generating functions
 	 * @param {...*} Parameters to pass to dynamic callbacks
 	 */
-	object.resolveDynamicContexts = function (dynamicOrStaticContexts) {
+	export function resolveDynamicContexts(dynamicOrStaticContexts) {
 		let params = Array.prototype.slice.call(arguments, 1);
 		return filter(
 			map(dynamicOrStaticContexts, function(context) {
@@ -181,7 +177,7 @@
 	/**
 	 * Only log deprecation warnings if they won't cause an error
 	 */
-	object.warn = function(message) {
+	export function warn(message) {
 		if (typeof console !== 'undefined') {
 			console.warn('Snowplow: ' + message);
 		}
@@ -190,7 +186,7 @@
 	/**
 	 * List the classes of a DOM element without using elt.classList (for compatibility with IE 9)
 	 */
-	object.getCssClasses = function (elt) {
+	export function getCssClasses(elt) {
 		return elt.className.match(/\S+/g) || [];
 	};
 
@@ -198,7 +194,7 @@
 	 * Check whether an element has at least one class from a given list
 	 */
 	function checkClass(elt, classList) {
-		var classes = object.getCssClasses(elt),
+		var classes = getCssClasses(elt),
 			i;
 
 		for (i = 0; i < classes.length; i++) {
@@ -218,7 +214,7 @@
 	 * @param boolean byClass Whether to whitelist/blacklist based on an element's classes (for forms)
 	 *                        or name attribute (for fields)
 	 */
-	object.getFilter = function (criterion, byClass) {
+	export function getFilter(criterion, byClass) {
 
 		// If the criterion argument is not an object, add listeners to all elements
 		if (Array.isArray(criterion) || !isObject(criterion)) {
@@ -259,7 +255,7 @@
 	 *
 	 * @param object criterion {transform: function (elt) {return the result of transform function applied to element}
 	 */
-	object.getTransform = function (criterion) {
+	export function getTransform(criterion) {
 		if (!isObject(criterion)) {
 			return function(x) { return x };
 		}
@@ -280,7 +276,7 @@
 	 * @param string name Name of the querystring pair
 	 * @param string value Value of the querystring pair
 	 */
-	object.decorateQuerystring = function (url, name, value) {
+	export function decorateQuerystring(url, name, value) {
 		var initialQsParams = name + '=' + value;
 		var hashSplit = url.split('#');
 		var qsSplit = hashSplit[0].split('?');
@@ -316,7 +312,7 @@
 	 * @return string The value obtained from localStorage, or
 	 *                undefined if localStorage is inaccessible
 	 */
-	object.attemptGetLocalStorage = function (key) {
+	export function attemptGetLocalStorage(key) {
 		try {
 			const exp = localStorage.getItem(key + '.expires');
 			if (exp === null || +exp > Date.now()) {
@@ -337,7 +333,7 @@
 	 * @param number ttl Time to live in seconds, defaults to 2 years from Date.now()
 	 * @return boolean Whether the operation succeeded
 	 */
-	object.attemptWriteLocalStorage = function (key, value, ttl = 63072000) {
+	export function attemptWriteLocalStorage(key, value, ttl = 63072000) {
 		try {
 			const t = Date.now() + ttl*1000;
 			localStorage.setItem(`${key}.expires`, t);
@@ -351,7 +347,7 @@
 	/**
 	 * Finds the root domain
 	 */
-	object.findRootDomain = function () {
+	export function findRootDomain() {
 		var cookiePrefix = '_sp_root_domain_test_';
 		var cookieName = cookiePrefix + new Date().getTime();
 		var cookieValue = '_test_value_' + new Date().getTime();
@@ -360,14 +356,14 @@
 		var position = split.length - 1;
 		while (position >= 0) {
 			var currentDomain = split.slice(position, split.length).join('.');
-			cookie.cookie(cookieName, cookieValue, 0, '/', currentDomain);
-			if (cookie.cookie(cookieName) === cookieValue) {
+			cookie(cookieName, cookieValue, 0, '/', currentDomain);
+			if (cookie(cookieName) === cookieValue) {
 
 				// Clean up created cookie(s)
-				object.deleteCookie(cookieName, currentDomain);
-				var cookieNames = object.getCookiesWithPrefix(cookiePrefix);
+				deleteCookie(cookieName, currentDomain);
+				var cookieNames = getCookiesWithPrefix(cookiePrefix);
 				for (var i = 0; i < cookieNames.length; i++) {
-					object.deleteCookie(cookieNames[i], currentDomain);
+					deleteCookie(cookieNames[i], currentDomain);
 				}
 
 				return currentDomain;
@@ -386,7 +382,7 @@
 	 * @param array The array to check within
 	 * @return boolean Whether it exists
 	 */
-	object.isValueInArray = function (val, array) {
+	export function isValueInArray(val, array) {
 		for (var i = 0; i < array.length; i++) {
 			if (array[i] === val) {
 				return true;
@@ -401,8 +397,8 @@
 	 * @param cookieName The name of the cookie to delete
 	 * @param domainName The domain the cookie is in
 	 */
-	object.deleteCookie = function (cookieName, domainName) {
-		cookie.cookie(cookieName, '', -1, '/', domainName);
+	export function deleteCookie(cookieName, domainName) {
+		cookie(cookieName, '', -1, '/', domainName);
 	};
 
 	/**
@@ -411,7 +407,7 @@
 	 * @param cookiePrefix The prefix to check for
 	 * @return array The cookies that begin with the prefix
 	 */
-	object.getCookiesWithPrefix = function (cookiePrefix) {
+	export function getCookiesWithPrefix(cookiePrefix) {
 		var cookies = document.cookie.split("; ");
 		var cookieNames = [];
 		for (var i = 0; i < cookies.length; i++) {
@@ -429,7 +425,7 @@
 	 * @param obj The object to parse
 	 * @return the result of the parse operation
 	 */
-	object.parseInt = function (obj) {
+	export function parseInt(obj) {
 		var result = parseInt(obj);
 		return isNaN(result) ? undefined : result;
 	};
@@ -441,9 +437,8 @@
 	 * @param obj The object to parse
 	 * @return the result of the parse operation
 	 */
-	object.parseFloat = function (obj) {
+	export function parseFloat(obj) {
 		var result = parseFloat(obj);
 		return isNaN(result) ? undefined : result;
 	}
 
-}());

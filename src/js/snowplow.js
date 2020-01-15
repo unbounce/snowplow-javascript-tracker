@@ -70,21 +70,13 @@
 	trackLink, trackPageView, trackImpression,
 	addPlugin, getAsyncTracker
 */
+	import forEach from 'lodash/forEach';
+	import filter from 'lodash/filter';
+	import { addEventListener } from './lib/helpers';
+	import InQueueManager from './in_queue';
+	import Tracker from './tracker';
 
-;(function() {
-
-	// Load all our modules (at least until we fully modularize & remove grunt-concat)
-	var
-		uuid = require('uuid'),
-		forEach = require('lodash/forEach'),
-		filter = require('lodash/filter'),
-		helpers = require('./lib/helpers'),
-		queue = require('./in_queue'),
-		tracker = require('./tracker'),
-
-		object = typeof exports !== 'undefined' ? exports : this; // For eventual node.js environment support
-
-	object.Snowplow = function(asynchronousQueue, functionName) {
+	export default function snowplow(asynchronousQueue, functionName) {
 
 		var
 			documentAlias = document,
@@ -172,7 +164,7 @@
 			var _timer;
 
 			if (documentAlias.addEventListener) {
-				helpers.addEventListener(documentAlias, 'DOMContentLoaded', function ready() {
+				addEventListener(documentAlias, 'DOMContentLoaded', function ready() {
 					documentAlias.removeEventListener('DOMContentLoaded', ready, false);
 					loadHandler();
 				});
@@ -210,7 +202,7 @@
 			}
 
 			// fallback
-			helpers.addEventListener(windowAlias, 'load', loadHandler, false);
+			addEventListener(windowAlias, 'load', loadHandler, false);
 		}
 
 		/************************************************************
@@ -226,7 +218,7 @@
 			 * @param string distSubdomain The subdomain on your CloudFront collector's distribution
 			 */
 			getTrackerCf: function (distSubdomain) {
-				var t = new tracker.Tracker(functionName, '', version, mutSnowplowState, {});
+				var t = new Tracker(functionName, '', version, mutSnowplowState, {});
 				t.setCollectorCf(distSubdomain);
 				return t;
 			},
@@ -238,18 +230,18 @@
 			 * @param string rawUrl The collector URL minus protocol and /i
 			 */
 			getTrackerUrl: function (rawUrl) {
-				var t = new tracker.Tracker(functionName, '', version, mutSnowplowState, {});
+				var t = new Tracker(functionName, '', version, mutSnowplowState, {});
 				t.setCollectorUrl(rawUrl);
 				return t;
 			},
 
 			/**
-			 * Get internal asynchronous tracker object
+			 * Get internal asynchronous Tracker object
 			 *
 			 * @return Tracker
 			 */
 			getAsyncTracker: function () {
-				return new tracker.Tracker(functionName, '', version, mutSnowplowState, {});
+				return new Tracker(functionName, '', version, mutSnowplowState, {});
 			}
 		};
 
@@ -258,11 +250,9 @@
 		 ************************************************************/
 
 		// initialize the Snowplow singleton
-		helpers.addEventListener(windowAlias, 'beforeunload', beforeUnloadHandler, false);
+		addEventListener(windowAlias, 'beforeunload', beforeUnloadHandler, false);
 		addReadyListener();
 
 		// Now replace initialization array with queue manager object
-		return new queue.InQueueManager(tracker.Tracker, version, mutSnowplowState, asynchronousQueue, functionName);
+		return new InQueueManager(Tracker, version, mutSnowplowState, asynchronousQueue, functionName);
 	};
-
-}());

@@ -32,15 +32,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-;(function() {
-
-	var
-		mapValues = require('lodash/mapValues'),
-		isString = require('lodash/isString'),
-		map = require('lodash/map'),
-		localStorageAccessible = require('./lib/detectors').localStorageAccessible,
-		helpers = require('./lib/helpers'),
-		object = typeof exports !== 'undefined' ? exports : this; // For eventual node.js environment support
+	import mapValues from 'lodash/mapValues';
+	import isString from 'lodash/isString';
+	import map from 'lodash/map';
+	import { localStorageAccessible } from './lib/detectors';
+	import { warn, attemptWriteLocalStorage } from './lib/helpers';
 
 	/**
 	 * Object handling sending events to a collector.
@@ -61,7 +57,7 @@
 	 *
 	 * @return object OutQueueManager instance
 	 */
-	object.OutQueueManager = function (functionName, namespace, mutSnowplowState, useLocalStorage, eventMethod, postPath, bufferSize, maxPostBytes, useStm, maxLocalStorageQueueSize) {
+	export default function OutQueueManager(functionName, namespace, mutSnowplowState, useLocalStorage, eventMethod, postPath, bufferSize, maxPostBytes, useStm, maxLocalStorageQueueSize) {
 		var	queueName,
 			executingQueue = false,
 			configCollectorUrl,
@@ -199,7 +195,7 @@
 			if (usePost) {
 				var body = getBody(request);
 				if (body.bytes >= maxPostBytes) {
-					helpers.warn("Event of size " + body.bytes + " is too long - the maximum size is " + maxPostBytes);
+					warn("Event of size " + body.bytes + " is too long - the maximum size is " + maxPostBytes);
 					var xhr = initializeXMLHttpRequest(configCollectorUrl);
 					xhr.send(encloseInPayloadDataEnvelope(attachStmToEvent([body.evt])));
 					return;
@@ -211,7 +207,7 @@
 			}
 			var savedToLocalStorage = false;
 			if (useLocalStorage) {
-				savedToLocalStorage = helpers.attemptWriteLocalStorage(queueName, JSON.stringify(outQueue.slice(0, maxLocalStorageQueueSize)));
+				savedToLocalStorage = attemptWriteLocalStorage(queueName, JSON.stringify(outQueue.slice(0, maxLocalStorageQueueSize)));
 			}
 
 			if (!executingQueue && (!savedToLocalStorage || outQueue.length >= bufferSize)) {
@@ -278,7 +274,7 @@
 						outQueue.shift();
 					}
 					if (useLocalStorage) {
-						helpers.attemptWriteLocalStorage(queueName, JSON.stringify(outQueue.slice(0, maxLocalStorageQueueSize)));
+						attemptWriteLocalStorage(queueName, JSON.stringify(outQueue.slice(0, maxLocalStorageQueueSize)));
 					}
 					executeQueue();
 				}
@@ -328,7 +324,7 @@
 				image.onload = function () {
 					outQueue.shift();
 					if (useLocalStorage) {
-						helpers.attemptWriteLocalStorage(queueName, JSON.stringify(outQueue.slice(0, maxLocalStorageQueueSize)));
+						attemptWriteLocalStorage(queueName, JSON.stringify(outQueue.slice(0, maxLocalStorageQueueSize)));
 					}
 					executeQueue();
 				};
@@ -391,5 +387,3 @@
 			executeQueue: executeQueue
 		};
 	};
-
-}());

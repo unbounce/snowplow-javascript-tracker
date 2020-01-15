@@ -32,9 +32,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
-var object = typeof exports !== 'undefined' ? exports : this;
-
 var makeSafe = function (fn) {
   return function () {
     try {
@@ -45,7 +42,7 @@ var makeSafe = function (fn) {
   };
 };
 
-exports.productionize = function (methods) {
+export default function productionize(methods) {
   let safeMethods = {};
   if (typeof methods === 'object' && methods !== null) {
     Object.getOwnPropertyNames(methods).forEach(

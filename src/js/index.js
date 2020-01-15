@@ -38,17 +38,13 @@
  * Get the name of the global input function
  */
 
-import snowplow from './snowplow';
+import Snowplow from "./snowplow";
 
-var queueName,
-	queue,
-	windowAlias = window;
+var queue = [];
 
-if (windowAlias.GlobalSnowplowNamespace && windowAlias.GlobalSnowplowNamespace.length > 0) {
-	queueName = windowAlias.GlobalSnowplowNamespace.shift();
-	queue = windowAlias[queueName];
-	queue.q = new snowplow(queue.q, queueName);
-} else {
-	windowAlias._snaq = windowAlias._snaq || [];
-	windowAlias._snaq = new snowplow(windowAlias._snaq, '_snaq');
-}
+export default function snowplow() {
+    queue = new Snowplow(queue, 'snowplow');
+    return function() {
+        queue.push(arguments);
+    };
+};
