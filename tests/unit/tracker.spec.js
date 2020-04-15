@@ -192,6 +192,13 @@ describe('Activity tracker behaviour', () => {
     t.updatePageActivity()
     advanceBy(1000)
 
+    advanceBy(15000)
+    jest.advanceTimersByTime(15000)
+
+    // activity on page one
+    t.updatePageActivity()
+    advanceBy(1000)
+
     // shift to page two and trigger tick
     t.trackPageView()
     advanceBy(14000)
@@ -231,6 +238,13 @@ describe('Activity tracker behaviour', () => {
     t.updatePageActivity()
     advanceBy(1000)
 
+    advanceBy(15000)
+    jest.advanceTimersByTime(15000)
+
+    // activity on page one
+    t.updatePageActivity()
+    advanceBy(1000)
+
     // shift to page two and trigger tick
     t.trackPageView()
     advanceBy(14000)
@@ -241,7 +255,7 @@ describe('Activity tracker behaviour', () => {
 
     const pps = getPPEvents(outQueues)
 
-    expect(F.size(pps)).toBe(0)
+    expect(F.size(pps)).toBe(1)
   })
 
   it('fires initial delayed activity tracking on first pageview and second pageview', () => {
@@ -313,6 +327,5 @@ describe('Activity tracker behaviour', () => {
 
     expect(firstPageId).toBe(extractPageId(pph))
     expect(secondPageId).toBe(extractPageId(ppl))
-
   })
 })

@@ -1592,22 +1592,39 @@
 		}
 
 		function activityInterval({ configHeartBeatTimer, configMinimumVisitLength, configLastActivityTime, callback, context }) {
-			return setInterval(function heartBeat() {
-				var now = new Date();
+      const METHOD = configHeartBeatTimer > configMinimumVisitLength * 1000 ? 'setTimeout' : 'setInterval'
+      return window[METHOD](function heartBeat(method) {
+        var now = new Date();
+        const executePagePing = () => {
+          refreshUrl();
+          callback({ context, pageViewId: getPageViewId(), minXOffset, minYOffset, maxXOffset, maxYOffset });
+          resetMaxScrolls();
+        }
 
-				// There was activity during the heart beat period;
-				// on average, this is going to overstate the visitDuration by configHeartBeatTimer/2
-				if ((lastActivityTime + configHeartBeatTimer) > now.getTime()) {
-					// Send ping if minimum visit time has elapsed
-					if (configLastActivityTime + configMinimumVisitLength * 1000 < now.getTime()) {
-						refreshUrl();
-						callback({ context, pageViewId: getPageViewId(), minXOffset, minYOffset, maxXOffset, maxYOffset });
-						resetMaxScrolls();
-					}
-				}
-			}, configHeartBeatTimer);
-		}
+        const onSetTimeout = () => {
+          if (lastActivityTime + configMinimumVisitLength * 1000 > now.getTime()) {
+            executePagePing();
+          }
+          setInterval(heartBeat, configHeartBeatTimer, 'setInterval');
+        }
 
+        const onSetInterval = () => {
+          if (lastActivityTime + configHeartBeatTimer > now.getTime()) {
+            if (configLastActivityTime + configMinimumVisitLength * 1000 < now.getTime()) {
+              executePagePing();
+            }
+          }
+        }
+
+        // There was activity during the heart beat period;
+        // on average, this is going to overstate the visitDuration by configHeartBeatTimer/2
+        if (method === 'setTimeout') {
+          onSetTimeout();
+        } else if (method === 'setInterval') {
+          onSetInterval();
+        }
+      }, METHOD === 'setTimeout' ? configMinimumVisitLength * 1000 : configHeartBeatTimer, METHOD);
+     }
 		/**
 		 * Configure the activity tracking and
 		 * ensures good values for min visit and heartbeat
