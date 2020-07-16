@@ -104,7 +104,6 @@ describe('Test that request_recorder logs meet expectations', () => {
       name: 'container',
       value: containerUrl,
     })
-    browser.setNetworkConditions({}, 'GPRS')    
     browser.url('/integration.html')
     browser.pause(15000) // Time for requests to get written
     browser.call(() =>
