@@ -58,7 +58,7 @@ describe('Activity tracker behaviour', () => {
     advanceBy(1000)
     t.updatePageActivity()
     advanceBy(4000)
-    jest.advanceTimersByTime(5000)
+    jest.advanceTimersByTime(5000) // 1
 
     // page ping timer starts tracking
     advanceBy(1000)
@@ -70,11 +70,11 @@ describe('Activity tracker behaviour', () => {
     advanceBy(1000)
     t.updatePageActivity()
     advanceBy(4000)
-    jest.advanceTimersByTime(5000)
+    jest.advanceTimersByTime(5000) // 2
     // window for page ping ticks
 
     expect(callbacks).toBe(3)
-    expect(F.size(getPPEvents(outQueues))).toBe(1)
+    expect(F.size(getPPEvents(outQueues))).toBe(2)
   })
 
   it('maintains current static context behaviour', () => {
@@ -274,13 +274,9 @@ describe('Activity tracker behaviour', () => {
         },
       }
     )
-
-    t.enableActivityTracking(0, 30)
+    
     let marker = false
     t.trackPageView(null, null, null, null, ev => (marker = true))
-
-    advanceBy(15000)
-    jest.advanceTimersByTime(15000)
 
     expect(marker).toBe(true)
   })
@@ -310,20 +306,20 @@ describe('Activity tracker behaviour', () => {
 
     // callback timer starts tracking
     advanceBy(1000)
-    t.updatePageActivity()
+    t.updatePageActivity() 
     advanceBy(4000)
-    jest.advanceTimersByTime(5000)
+    jest.advanceTimersByTime(5000) // 1
 
     // page ping timer starts tracking
     advanceBy(1000)
     t.updatePageActivity()
     advanceBy(4000)
-    jest.advanceTimersByTime(5000)
+    jest.advanceTimersByTime(5000) // 2
 
     advanceBy(1000)
-    t.updatePageActivity()
+    t.updatePageActivity() 
     advanceBy(4000)
-    jest.advanceTimersByTime(5000)
+    jest.advanceTimersByTime(5000) // 3
 
     t.trackPageView()
     const secondPageId = t.getPageViewId()
@@ -334,20 +330,20 @@ describe('Activity tracker behaviour', () => {
     advanceBy(1000)
     t.updatePageActivity()
     advanceBy(4000)
-    jest.advanceTimersByTime(5000)
+    jest.advanceTimersByTime(5000) // 4
 
     // window for page ping ticks
     advanceBy(1000)
-    t.updatePageActivity()
+    t.updatePageActivity() 
     advanceBy(4000)
-    jest.advanceTimersByTime(5000)
+    jest.advanceTimersByTime(5000) // 5
 
     // Activity began tracking on the first page and tracked two page pings in 16 seconds.
     // Activity tracking only fires one further event over next 11 seconds as a page view event occurs, resetting timer back to 10 seconds.
 
     const pps = getPPEvents(outQueues)
 
-    expect(F.size(pps)).toBe(3)
+    expect(F.size(pps)).toBe(5)
 
     const pph = F.head(pps)
     const ppl = F.last(pps)

@@ -400,7 +400,6 @@
 
 			uaClientHints = null;
 
-    console.log("at", anonymousTracking, "ast", anonymousSessionTracking)
 			if (autoContexts.clientHints) {
 				if (navigatorAlias.userAgentData) {
 					uaClientHints = {
@@ -594,6 +593,7 @@
 		 * Send request
 		 */
 		function sendRequest(request, delay) {
+			console.log('sendRequest')
 			var now = new Date();
 
 			// Set to true if Opt-out cookie is defined
@@ -1769,49 +1769,48 @@
 						//Clear page ping heartbeat on new page view
 						clearInterval(config.activityInterval);
 
-						config.activityInterval = activityInterval({
-							...config,
-							configLastActivityTime: lastActivityTime,
-							context: finalizeContexts(context, contextCallback)
-						});
+						activityInterval(config, finalizeContexts(context, contextCallback));
 					}
 				}
 			}
 		}
 
-		function activityInterval({ configHeartBeatTimer, configMinimumVisitLength, configLastActivityTime, callback, context }) {
-			const METHOD = configHeartBeatTimer > configMinimumVisitLength * 1000 ? 'setTimeout' : 'setInterval'
-			return window[METHOD](function heartBeat(method) {
-				var now = new Date();
-				const executePagePing = () => {
-					refreshUrl();
-					callback({ context, pageViewId: getPageViewId(), minXOffset, minYOffset, maxXOffset, maxYOffset });
-					resetMaxScrolls();
-				}
+		function activityInterval(configuration, context) {
+			const { configMinimumVisitLength, configHeartBeatTimer, callback } = configuration;
 
-				const onSetTimeout = () => {
-					if (lastActivityTime + configMinimumVisitLength * 1000 > now.getTime()) {
-						executePagePing();
-					}
-					setInterval(heartBeat, configHeartBeatTimer, 'setInterval');
-				};
+			const executePagePing = () => {
+				refreshUrl()
+				callback({ context, pageViewId: getPageViewId(), minXOffset, minYOffset, maxXOffset, maxYOffset })
+				resetMaxScrolls()
+			}
 
-				const onSetInterval = () => {
-					if (lastActivityTime + configHeartBeatTimer > now.getTime()) {
-						if (configLastActivityTime + configMinimumVisitLength * 1000 < now.getTime()) {
-							executePagePing();
-						}
-					}
-				};
+			const timeout = () => {
+				var now = new Date()
 
 				// There was activity during the heart beat period;
 				// on average, this is going to overstate the visitDuration by configHeartBeatTimer/2
-				if (method === 'setTimeout') {
-					onSetTimeout();
-				} else if (method === 'setInterval') {
-					onSetInterval();
+				if (lastActivityTime + configMinimumVisitLength > now.getTime()) {
+					executePagePing(callback, context)
 				}
-			}, METHOD === 'setTimeout' ? configMinimumVisitLength * 1000 : configHeartBeatTimer, METHOD);
+
+				configuration.activityInterval = setInterval(heartbeat, configHeartBeatTimer)
+			}
+
+			const heartbeat = () => {
+				var now = new Date()
+
+				// There was activity during the heart beat period;
+				// on average, this is going to overstate the visitDuration by configHeartBeatTimer/2
+				if (lastActivityTime + configHeartBeatTimer > now.getTime()) {
+					executePagePing(callback, context)
+				}
+			}
+
+			if (configMinimumVisitLength != 0) {
+				configuration.activityInterval = setTimeout(timeout, configMinimumVisitLength)
+			} else {
+				configuration.activityInterval = setInterval(heartbeat, configHeartBeatTimer)
+			}
 		}
 
 		/**
@@ -1826,7 +1825,7 @@
 			if (minimumVisitLength === parseInt(minimumVisitLength, 10) &&
 				heartBeatDelay === parseInt(heartBeatDelay, 10)) {
 				return {
-					configMinimumVisitLength: minimumVisitLength,
+					configMinimumVisitLength: minimumVisitLength * 1000,
 					configHeartBeatTimer: heartBeatDelay * 1000,
 					activityInterval: null,
 					callback
